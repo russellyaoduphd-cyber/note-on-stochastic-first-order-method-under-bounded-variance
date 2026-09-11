@@ -1,0 +1,250 @@
+\usepackage[margin =1in]{geometry}
+\usepackage{amssymb,amsthm,amsmath}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage[capitalize]{cleveref}
+\usepackage[shortlabels]{enumitem}
+\usepackage{color}
+\usepackage{cancel}
+ \usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage{pgf}
+\usepackage{svg}
+\usepackage{pgfplots}
+\usepackage{import}
+\usepackage{svg}
+\usepackage{comment}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}
+\usepackage{multirow}
+\usepackage{xfrac}
+\usepackage{todonotes}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{subcaption}
+
+%algorithm packages
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{array}
+
+%% to supress these in algo
+\algtext*{EndFor}
+\algtext*{EndIf}
+\algtext*{EndWhile}
+\algtext*{EndProcedure}
+\algrenewtext{For}[1]{\textbf{for} #1}
+\algrenewtext{While}[1]{\textbf{while} #1}
+\algrenewtext{If}[1]{\textbf{if} #1}
+
+\algnewcommand{\Input}{\item[\textbf{Input:}]}
+\algnewcommand{\Initialize}{\item[\textbf{Initialize:}]}
+
+\newcommand{\col}{c} %table Macro
+
+
+\setlength{\parindent}{2em}
+
+\usepackage{varwidth}
+
+\titleformat{\subsubsection}[runin]
+{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+
+% graphics for images
+\usepackage{graphicx}
+
+% If you uncomment the following line, make sure to uncomment the figures
+% in the experiments section and comment the ones used now
+%\usetikzlibrary{external}
+%\tikzexternalize[prefix=figures/]
+%\pgfkeys{
+%    /tikz/external/mode=list and make
+%}
+
+%\usepackage{url}
+\usepackage{appendix}
+\numberwithin{equation}{section}
+%%%%%%%%%% Math %%%%%%%%%%%%%%%
+
+\newcommand{\tr}{\mathrm{Tr}}
+\newcommand{\vect}{\mathbf{vec}}
+
+\newcommand{\norm}[1]{\left \| #1 \right \|}
+\newcommand{\opnorm}[1]{\norm{#1}_{\mathrm{op}}}
+\newcommand{\Rank}{\text{Rank }}
+\newcommand{\Ker}{\text{Ker }}
+\newcommand{\Ran}{\text{Ran }}
+\newcommand{\Dim}{\text{dim }}
+\newcommand{\spann}[1]{\mathrm{span}\left\{{#1}\right\}}
+\newcommand{\im}{\text{Im }}
+\newcommand{\gph}{{\rm gph}\,}
+\newcommand{\diag}{{\rm diag}}
+\newcommand{\sign}{\mathrm{sign}}
+
+
+
+%%%%%%%%% Convex Analysis %%%%%%%%%
+\newcommand{\prox}{\text{prox}}
+\newcommand{\proj}{\mathrm{proj}}
+\newcommand{\dom}[1]{\mathrm{dom }(#1)}
+\newcommand{\epi}{\text{epi }}
+\newcommand{\hypo}{\text{hypo }}
+\newcommand{\interior}{\text{int }}
+\newcommand{\bdry}{\text{bdy }}
+\newcommand{\relint}{\text{ri }}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+\newcommand{\mini}{\operatornamewithlimits{minimize}}
+\newcommand{\ls}{\operatornamewithlimits{limsup}}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\Rext}{(-\infty, \infty]}
+
+
+%%%%%%%% Theorems %%%%%%%%%%%%%
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{theorem}[thm]{Theorem}
+\newtheorem{definition}[thm]{Definition}
+\newtheorem{proposition}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{corollary}[thm]{Corollary}
+\newtheorem{pa}{Part}
+\newtheorem{subclaim}{Subclaim}
+{\theoremstyle{plain}
+\newtheorem{assumption}{Assumption}}
+\newtheorem{model}{Model}
+
+
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{conjecture}[thm]{Conjecture}
+\newtheorem{notation}{Notation}
+\newtheorem{example}{Example}[section]
+
+\newtheorem{claim}{Claim}
+\numberwithin{equation}{section}
+\crefname{claim}{claim}{claims}
+\Crefname{claim}{Claim}{Claims}
+\crefname{lem}{lemma}{lemmas}
+\Crefname{lem}{Lemma}{Lemmas}
+\crefname{algorithm}{algorithm}{algorithms}
+\Crefname{algorithm}{Algorithm}{Algorithms}
+
+
+% Macros for initialization section
+\newcommand{\eps}{\varepsilon}
+
+
+% Aaron's commands
+\newcommand{\conv}[1]{\textrm{conv}\left\{{#1}\right\}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Lcal}{\mathcal{L}}
+\newcommand{\Fcal}{\mathcal{F}}
+\newcommand{\Z}{\mathcal{Z}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\Ical}{\mathcal{I}}
+\newcommand{\Holder}{H\"older }
+\newcommand{\inner}[2]{\left\langle {#1}, {#2} \right\rangle}
+\newcommand{\Wopt}{\mathcal{W}_\star^{M,D,N}}
+\newcommand{\Lleft}{L^{\leftarrow}}
+
+\newcommand{\ben}[1]{{\color{blue}(#1 -- Ben)}} % Ben's comments
+\newcommand{\aaron}[1]{{\color{purple}(#1 -- Aaron)}} % Aaron's comments
+
+\usepackage{mathtools}
+
+\newcommand{\half}[1]{\scalebox{0.5}{#1}}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\raggedbottom
+
+
+% PEP macros ---------------
+\newcommand{\pAlg}{p^\mathtt{GFOM}}
+\newcommand{\dAlg}{d^\mathtt{GFOM}}
+\newcommand{\pPEP}[1]{p_{#1}}
+\newcommand{\dPEP}[1]{d_{#1}}
+\newcommand{\Algclass}[1]{\mathtt{A}_{\mathrm{{#1}}}}
+\newcommand{\Pclassd}{\mathtt{P}_{M,D}^d}
+\newcommand{\Pclass}{\mathtt{P}_{M,D}}
+
+
+
+
+\newlength{\solutionindent}
+\setlength{\solutionindent}{0.1cm}
+
+\newlength{\questionboxrule}
+\setlength{\questionboxrule}{0.8pt} % thinner border (default fboxrule is 0.4pt, go lower for thinner)
+
+\newcommand{\solution}[1]{%
+    \vspace{0.2cm}
+    \noindent\underline{\textit{Solution:}}\\[2pt]
+    \begin{adjustwidth}{\solutionindent}{\solutionindent}
+        {\color{red} #1}
+    \end{adjustwidth}
+    \vspace{0.2cm}
+}
+
+\newcommand{\algobox}[1]{%
+    \begin{center}
+        \begin{tikzpicture}
+            \node[
+                draw=black,
+                line width=\questionboxrule,
+                rounded corners=1pt,        % adjust for more/less rounding
+                fill=white,
+                inner sep=8pt,              % controls padding inside the box
+                text width=\dimexpr\linewidth-4\fboxsep-2\solutionindent\relax,
+            ] {\color{black} #1};
+        \end{tikzpicture}
+    \end{center}
+}
+
+\usepackage[dvipsnames]{xcolor}
+
+
+
+\usepackage{hyperref}
+
+\hypersetup{
+  pdftitle={
+    A Complete Characterization of Optimal 
+    Subgradient Methods for Lipschitz Convex Minimization
+  },
+  pdfauthor={
+    Aaron Zoll and Benjamin Grimmer
+  },
+  pdfsubject={
+    A characterization of all fixed-step first-order methods attaining
+    the minimax-optimal objective-gap guarantee for Lipschitz convex
+    minimization
+  },
+  pdfkeywords={
+    nonsmooth convex optimization,
+    Lipschitz convex minimization,
+    subgradient methods,
+    fixed-step first-order methods,
+    minimax optimality,
+    optimal first-order methods,
+    performance estimation problems,
+    worst-case analysis,
+    polyhedral characterization,
+    first-order oracle complexity
+  },
+  pdfcreator={LaTeX with hyperref},
+  pdfdisplaydoctitle=true,
+  unicode=true
+}

@@ -1,0 +1,1132 @@
+ \documentclass[11pt, hidelinks]{article}
+\input{preamble}
+\usepackage{optidef}
+
+\title{Exact Theory and Optimal Stepsizes for Stochastic Gradient Descent in Smooth Convex Minimization}
+\author{}
+\date{July 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    This work considers the design of stepsize schedules for stochastic gradient descent in smooth convex optimization. Throughout, we assume that gradient noise is independent, zero-mean, and has bounded variance. For any sufficiently high-dimensional problem, we provide an exact worst-case analysis of the expected suboptimality of stochastic gradient descent with any (potentially nonconstant) schedule of $N$ stepsizes in $[0,1.5]^N$. Here, exact means that we provide a matching objective function and noise distributions where our guarantee is attained, so no further progress is possible. Under the modest condition that the variance is at least $\Omega(1/\sqrt{N})$, our theory provides the exactly optimal stepsize schedule. These optimal stepsizes are monotone decreasing, ruling out the potential for fractal accelerations observed in the deterministic case.
+\end{abstract}
+
+
+\section{Introduction}
+
+We consider the problem of $L$-smooth convex minimization of the form
+\begin{equation}
+    f_\star = \min_{x\in\mathbb{R}^d} f(x)
+\end{equation}
+in an arbitrary (potentially large) dimension $d$. Throughout, we assume this minimum is attained at some $x_\star$ and an initialization is provided with bounded distance $\|x_0-x_\star\|\leq D$.
+
+Given such an initialization, we study Stochastic Gradient Descent (SGD), run for a budget of $N$ steps. At each iteration $n=1,\dots,N$, the algorithm is provided a stochastic estimate of the objective's gradient
+\begin{equation}
+    \widetilde g_{n-1} = \nabla f(x_{n-1}) + \epsilon_{n-1}
+\end{equation}
+with $\epsilon_{n-1}$ sampled independently from a zero-mean distribution $P_{n-1}$ with variance at most $\sigma^2$. That is, $\mathbb{E}[\epsilon_{n-1}]=0$ and $\mathbb{E}[\|\epsilon_{n-1}\|^2]\leq \sigma^2$. The algorithm then uses this stochastic oracle and a sequence of $N$ stepsizes $h_{0},\dots,h_{N-1} \geq 0$ to iterate
+\begin{equation} \label{eq:SGD}
+    x_n = x_{n-1} - \frac{h_{n-1}}{L}\widetilde g_{n-1}.
+\end{equation}
+Afterwards, the algorithm outputs its final iterate $x_N$.
+
+Here, a problem instance in dimension $d$ is defined by the initialization $x_0\in\mathbb{R}^d$, objective function $f\colon \mathbb{R}^d\rightarrow \mathbb{R}$, and sequence of distributions from which noise is drawn, $P_0,\dots,P_{N-1}$. We denote these collectively by some
+\begin{equation*}
+    \mathtt{p} = (x_0,f, P_0,\dots,P_{N-1}).
+\end{equation*}
+We denote the set of problem instances by $\mathtt{P}(L,D,\sigma^2)$ (constrained by $L$-smoothness, $D$ initial distance, and $\sigma^2$ variance).
+
+For a fixed vector of nonnegative stepsizes $h\in\mathbb{R}^N_+$, we measure the performance of SGD by the expected final objective gap, $\mathbb{E}_{\epsilon} f(x_N) - f_\star$. Notice the only source of randomness considered is the independent noise at each iteration, so this expectation is only over $\epsilon_i$.
+
+
+The principal object of our study is the worst-case performance of SGD (for fixed stepsizes $h$) over this problem class (for fixed $L,D,\sigma^2$). This is known as its ``Performance Estimation Problem'' (PEP). Formally, we denote this by
+\begin{equation}\label{eq:PEP}
+    \mathtt{PEP}(h,L,D,\sigma^2) = \max_{\mathtt{p} \in \mathtt{P}(L,D,\sigma^2)} \left\{\mathbb{E}_{\epsilon} \left[f(x_N)\right] - f_\star \right\}.
+\end{equation}
+Here we consider a fixed iteration budget $N$ and problem dimension $d$, which are suppressed in the above notation.
+
+PEPs were first proposed and analyzed by~\cite{drori2014,taylor2017smooth,taylor2017composite} in the context of deterministic optimization. For sufficiently structured deterministic problem classes (i.e., $L$-smooth convex minimization), provided $d$ is large enough, the related PEP can often be described as a semidefinite program (SDP). From this, duality-based and computer-assisted design techniques can then be applied.
+
+Several works~\cite{} have extended PEPs to various stochastic settings, although without as complete of theory. The stochastic PEP approach of~\cite{} was particularly influential on our development here\dots
+
+\paragraph{Our Contributions.} 
+Our main result exactly solves the above PEP for SGD with any schedule of stepsizes $h\in\mathbb{R}^N$ in the short step regime $[0,1.5]^N$, provided $d\geq N+1$. In particular, our convergence upper bound applies for problems in any dimension, only requiring the short step assumption, and our convergence lower bound applies for any nonnegative stepsizes, only requiring the large dimension assumption. When both hold, the two bounds agree, providing the exact worst-case.
+
+\begin{theorem} \label{thm:main-rate}
+    For any iteration budget $N\geq 1$, stepsizes $h\in [0,1.5]^N$, and problem parameters $L,D,\sigma^2>0$, the SGD method~\eqref{eq:SGD} applied to any problem instance $(x_0,f,P_0,\dots,P_{N-1})\in\mathtt{P}(L,D,\sigma^2)$ has
+    \begin{equation*}
+        \mathbb{E}_{\epsilon} \left[f(x_N)\right] - f_\star \leq \frac{LD^2}{
+        2\left(1+2R_0\right)
+        }
+        +
+        \frac{\sigma^2}{2L}
+        \sum_{j=0}^{N-1}
+        \frac{h_j^2}{
+        1+2R_{j+1}
+        }
+    \end{equation*}
+    where $R_n = \sum_{i=n}^{N-1} h_i$ denotes the total remaining stepsize length for any $n$ with $R_N=0$.
+    Moreover, for any stepsizes $h\in \mathbb{R}_+^N$, if $d\geq N+1$, there exists a matching problem instance with equality in
+    \begin{equation*}
+        \mathbb{E}_{\epsilon} \left[f(x_N)\right] - f_\star = \frac{LD^2}{
+        2\left(1+2R_0\right)
+        }
+        +
+        \frac{\sigma^2}{2L}
+        \sum_{j=0}^{N-1}
+        \frac{h_j^2}{
+        1+2R_{j+1}
+        }.
+    \end{equation*}
+\end{theorem}
+Section~\ref{sec:LB} proves the lower bound portion of this theory by constructing a worst-case objective and collection of distributions.
+Section~\ref{sec:UB} proves this rate by constructing an SDP certificate for a dual relaxation of~\eqref{eq:PEP}. (Since these agree, the dual relaxation is tight for this regime of SGD.)
+
+As an immediate corollary of this theorem, one can optimize over stepsize schedules. Consider
+\begin{equation} \label{eq:minimax-design}
+    r_\star(L,D,\sigma^2) = \min_{h\in\mathbb{R}^N_+} \max_{\mathtt{p} \in \mathtt{P}(L,D,\sigma^2)} \left\{\mathbb{E}_{\epsilon} \left[f(x_N)\right] - f_\star \right\}
+\end{equation}
+where we continue to suppress the dependence on the fixed values $N,d$. The above value $r_\star(L,D,\sigma^2)$ denotes the best possible final guarantee any fixed schedule can provide. Applying the lower bounding portion of Theorem~\ref{thm:main-rate}, if $d\geq N+1$, then one has
+\begin{equation}
+    r_\star(L,D,\sigma^2) \geq \min_{h\in\mathbb{R}^N_+} \frac{LD^2}{
+        2\left(1+2R_0\right)
+        }
+        +
+        \frac{\sigma^2}{2L}
+        \sum_{j=0}^{N-1}
+        \frac{h_j^2}{
+        1+2R_{j+1}
+        }
+\end{equation}
+This minimization problem can be solved by observing that the stated objective is convex in $h$ and possesses a unique stationary point in $\mathbb{R}^N_+$. So its minimizer is given by a system of equations setting the gradient equal to zero,
+\begin{equation*}
+    \nabla \left(\frac{LD^2}{
+        2\left(1+2R_0\right)
+        }
+        +
+        \frac{\sigma^2}{2L}
+        \sum_{j=0}^{N-1}
+        \frac{h_j^2}{
+        1+2R_{j+1}
+        }\right) (h^\star)= 0.
+\end{equation*}
+To give the unique solution to this system, consider the recurrence $c_{i+1}=c_i+c_i^2$ for $i=0,\dots,N-1$, setting $c_0$ as the unique positive solution to the equation
+\begin{equation*}
+c_0\prod_{i=0}^{N-1} \left(1+2c_i\right)^2 = \frac{L^2D^2}{\sigma^2}.
+\end{equation*}
+Then the stepsizes minimizing the above bound are given by
+\begin{align}
+h_i^\star = c_i \prod_{k=i+1}^{N-1}\left(1+2c_k\right), \qquad i=0,\dots,N-1. \label{eq:optimal-steps}
+\end{align}
+Plugging this in provides a lower bound on the performance of SGD with any nonnegative stepsize schedule. Namely, for any $L,D,\sigma^2>0$,
+\begin{equation} \label{eq:general-LB}
+    r_\star(L,D,\sigma^2) \geq  \sigma D \sqrt{c_0} - \frac{\sigma^2}{2L}c_N
+\end{equation}
+
+Observe that if $\sigma^2 \geq \frac{2}{3\sqrt{3}}\frac{L^2D^2}{\sqrt{N}}$, then $h_0^\star \in [0,1.5]$. Consequently, since $h^\star_i$ is monotone decreasing, $h^\star\in [0,1.5]^N$. Thus the above minimization is actually attained at a short step schedule $h^\star\in [0,1.5]^N$ where the lower bound is tight. Hence, in this regime, $h^\star$ is minimax optimal. The following result formally states this corollary.
+\begin{corollary}
+    Provided $\sigma^2 \geq \frac{2}{3\sqrt{3}}\frac{L^2D^2}{\sqrt{N}}$ and $d\geq N+1$, the stepsize schedule $h^\star$ in~\eqref{eq:optimal-steps} is exactly minimax optimal, i.e., solves~\eqref{eq:minimax-design}. In particular, SGD with optimal stepsizes $h^\star$ has
+    $$  \mathbb{E}_{\epsilon} \left[f(x_N)\right] - f_\star \leq r_\star(L,D,\sigma^2) = \frac{\sigma D}{\sqrt{N}} - \frac{\sigma^{3/2}\sqrt{D}}{\sqrt{L}N^{3/4}} + o(1/N^{3/4}). $$
+    No other fixed stepsize schedule has a smaller worst-case final objective gap (even by constants).
+\end{corollary}
+
+Figure~\ref{fig:stepsizes} shows the optimal stepsize schedules for $N=10,100$ steps with variances ranging from $\sigma^2=1/8,1/2,2,8$, fixing $L=D=1$. One can see the optimal stepsizes decay almost linearly. Indeed, one can approximate the optimal schedule, given $N,L,D,\sigma^2$, by the simpler formula
+\begin{equation} \label{eq:simple-asym-optimal-formula}
+    h_i^\star \approx \sqrt{\frac{LD}{\sigma} \frac{1}{N^{3/2}}} + \frac{LD}{\sigma} \frac{N-1-i}{N^{3/2}}.
+\end{equation}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{optimal_stepsizes.pdf}
+    \caption{The exactly minimax optimal stepsize schedule $h^\star$ from~\eqref{eq:optimal-steps} for varied budgets $N$ and variances $\sigma^2$, fixing $L=D=1$. Asymptotically, this schedule behaves like the linear function~\eqref{eq:simple-asym-optimal-formula}.}
+    \label{fig:stepsizes}
+\end{figure}
+
+\subsection{Related Work} \label{sec:related}
+
+
+\section{Proof of Exact Lower Bound for any $h\in \mathbb{R}^N_+$} \label{sec:LB}
+
+We construct our worst-case problem instance in dimension $d\geq N+1$ as follows:
+Denote the $L$-smooth Huber function parameterized by a scalar $a\geq 0$ by
+\begin{equation*}
+    H_a(z) = \begin{cases}
+        \frac{L}{2}|z|^2 & \text{if } |z|\leq a\\
+        L a|z| - \frac{L}{2}a^2 & \text{otherwise}.
+    \end{cases}
+\end{equation*}
+Note the degenerate case of $a=0$ has $H_0(z)=0$.
+Let $e_0,e_1,\dots,e_N$ denote a collection of $N+1$ orthogonal unit vectors (which exist by our choice to work in dimension $d\geq N+1$). Define our worst-case problem instance's initialization $x_0 = De_0$.
+Define our noise distributions at each iteration $n=1,\dots,N$ by the Rademacher distributions
+\begin{equation} \label{eq:hard-distributions}
+   \epsilon_{n-1} \sim P_{n-1}, \qquad \epsilon_{n-1} = \begin{cases}
+        + \sigma e_n & \text{with probability }1/2\\
+        - \sigma e_n & \text{with probability }1/2.
+    \end{cases}
+\end{equation}
+Define our objective function by
+\begin{equation} \label{eq:hard-function}
+    f(x) = \sum_{i=0}^N H_{a_i}(\langle e_i, x\rangle)
+\end{equation}
+with $a_0 = \frac{D}{1+2 R_0}$ and $a_n = \frac{\sigma h_{n-1}}{
+L\left(1+2R_n\right)
+}$ for $n=1,\dots,N$.
+The following lemma verifies this construction is indeed feasible for any choice of the parameters $L,D,\sigma^2 >0$.
+\begin{lemma}
+    The problem instance $\mathtt{p}$ defined by $x_0=De_0$, $f$ as in~\eqref{eq:hard-function}, and distributions $P_n$ as in~\eqref{eq:hard-distributions} is feasible, i.e., $\mathtt{p}\in\mathtt{P}(L,D,\sigma^2)$.
+\end{lemma}
+\begin{proof}
+    First, observe that the function $f$ is minimized at the origin $x_\star=0$, having $f_\star=0$. Then, one can verify the needed initial condition as $\|x_0-x_\star\|=\|De_0\|=D$. The needed conditions for each noise distribution $P_n$ of zero-mean and $\sigma^2$-bounded variance follow directly from its definition.
+    
+    All that remains is to verify that $f$ is convex and $L$-smooth. A simple calculation can verify that the Huber function $H_a$ is convex and $L$-smooth for any $a\geq 0$. Since $f$ is a sum of these Huber functions, it inherits their convexity. Moreover, applying the chain rule, the gradient of $f$ is given by
+    \begin{equation*}
+        \nabla f(x) = \sum_{i=0}^N H_{a_i}'(\langle e_i,x\rangle)e_i.
+    \end{equation*}
+    Then $L$-smoothness of $f$ follows from $L$-smoothness of each Huber function as
+    \begin{align*}
+        \|\nabla f(x)-\nabla f(y)\|^2 &= \|\sum_{i=0}^N (H_{a_i}'(\langle e_i,x\rangle) - H_{a_i}'(\langle e_i,y\rangle))e_i\|^2\\
+        &=\sum_{i=0}^N |H_{a_i}'(\langle e_i,x\rangle) - H_{a_i}'(\langle e_i,y\rangle)|^2\\
+        &\leq L^2\sum_{i=0}^N |\langle e_i, x-y\rangle|^2\\
+        &\leq L^2 \|x-y\|^2.
+    \end{align*}
+\end{proof}
+
+\begin{proof}[Proof of Lower Bound Half of Theorem~\ref{thm:main-rate}]
+    Suppose one has applied SGD to this constructed problem instance. Below, we find that, for any realization of the noise sequence $\epsilon_n$, the claimed expected final iterate suboptimality is attained by the realized suboptimality. In particular, this constant final suboptimality establishes that the expectation over realizations is also exactly the claimed bound.
+
+    Consider any sequence of signs $s_{n}\in\{\pm 1\}$ for $n=1,\dots,N$, providing a realization of errors from $P_{n-1}$ of $\epsilon_{n-1} = s_n \sigma e_n$. The key observation here is that the objective $f$ is separable over the coordinate directions $e_0,\dots,e_N$. So the progression of gradient descent in direction $e_i$ only depends on $\langle e_i, x_n\rangle$ (and no other directions). Thus we can analyze each direction separately.
+
+    First consider the direction $e_0$. Each error $\epsilon_{n-1}$ is orthogonal to this direction, so SGD amounts to applying gradient descent deterministically to minimize $H_{a_0}(\langle e_0, x \rangle)$. This is a well-studied worst-case function for deterministic gradient descent~\cite{}. We claim inductively that every iterate $n=0,\dots,N$ has $\langle e_0, x_n\rangle \geq a_0$. At $n=0$, this is immediate as $D\geq a_0$. Inductively, this follows at some $n\geq 1$ as all prior iterations have derivative in direction $e_0$ of $H'_{a_0}(\langle e_0, x_{i}\rangle) = La_0$. So
+    \begin{equation*}
+        \langle e_0, x_n\rangle = \langle e_0, x_0\rangle - \sum_{i=0}^{n-1} h_i a_0 = a_0\left(1+2\sum_{i=0}^{N-1} h_i\right) - a_0 \sum_{i=0}^{n-1} h_i = a_0(1+R_0+R_n) \geq a_0
+    \end{equation*}
+    by noting $\langle e_0, x_0\rangle =D= a_0\left(1+2\sum_{i=0}^{N-1} h_i\right)$ from our choices of $x_0$ and $a_0$.
+    
+    In particular, the above calculation shows $\langle e_0, x_N\rangle = a_0(1+R_0)$. Hence, the final objective value on this first Huber function component is
+    \begin{equation*}
+        H_{a_0}(\langle e_0,x_N\rangle) = La_0| a_0(1+R_0)| - \frac{L}{2}a_0^2 = \frac{L}{2}a_0^2(1+2R_0) = \frac{LD^2}{2(1+2R_0)}.
+    \end{equation*}
+
+    The same calculations can be repeated on each component $e_1,\dots,e_N$. There, iterations $n=1,\dots,i-1$ have no effect on the $i$th component as $\langle e_i,x_n\rangle=0$. Then iteration $n=i$ will set $\langle e_i,x_i\rangle = -s_{i}\sigma h_{i-1}/L = -s_ia_i(1+2R_i)$. Thereafter, each iteration $n=i+1,\dots,N$ will perform deterministic gradient descent in this coordinate direction. Just as calculated above, gradient descent will always remain on the same (positive or negative) facet of the Huber function $H_{a_i}$, in particular having $\langle e_i,x_n\rangle = -s_ia_i(1+R_i+R_n)$. Continuing with the same calculation, this ensures the final iterate has 
+    \begin{equation*}
+        H_{a_i}(\langle e_i,x_N\rangle) = \frac{\sigma^2}{2L}\frac{h_{i-1}^2}{1+2 R_{i}},
+    \end{equation*}
+    regardless of the sampled sign $s_i$. Summing over each coordinate $e_0,\dots,e_{N}$ shows the claimed lower bound is attained on every realization of signs.
+\end{proof}
+
+
+
+\section{Proof of Exact Convergence Guarantee for any $h\in [0,1.5]^N$} \label{sec:UB}
+
+Some text introducing main ideas
+
+\subsection{PEP-Style Convergence Proof}
+
+The following are nonnegative or equal to zero for any problem \dots
+
+This gives the primal PEP problem of\dots
+
+If we find nonneg/psd multipliers such that the identity \dots holds, then we will have proven our target rate.
+
+So our proof reduces to finding these.
+
+In particular, we will use (define all values)
+
+\begin{proposition}\label{prop:nonneg-mult}
+    The scalars are nonnegative
+\end{proposition}
+
+\begin{proposition}\label{prop:psd-mult}
+    The matrix is psd
+\end{proposition}
+
+\begin{proposition}\label{prop:identity}
+    The identity holds
+\end{proposition}
+
+Once we prove these, the claimed rate and so all of our theorems and corollaries from the introduction follow.
+We do this in parts in the following subsections, checking nonnegativeity and then agreement of each coefficient in the claimed affine identity.
+
+\subsection{Useful Intermediate Identities and Lemmas}
+
+\subsection{Proof of Nonnegativity (Proposition~\ref{prop:nonneg-mult})}
+
+\subsection{Proof of Positive Semidefiniteness (Proposition~\ref{prop:psd-mult})}
+
+\subsection{Verification of Constant Terms in Proposition~\ref{prop:identity}}
+
+
+\subsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
+
+
+\subsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
+
+
+
+\section{Conclusion}
+
+
+
+\section{Closed-formed expression of Multipliers}
+The basic assumption: all entries in the stepsize schedule is between 0 and 1.5, that is:
+\[h_i\in [0,1.5], \forall i = 0, 1, ....,N-1\] in other words, \[h^{(N)} \in [0, 1.5]^N\]\\
+We study L-smooth and convex functions in $R^d$.
+
+
+
+\todo[inline,color=cyan]{Define all needed nonnegative quantities here. Do not separate $Q_\star$ from $Q_i$'s. Allow $i\in\mathcal{I}=\{0,\dots,N,\star\}$ and $g_\star=0$. Aaron's paper is a good reference: \url{https://arxiv.org/pdf/2607.19240}}
+
+
+\todo[inline,color=cyan]{State form of target proof $r - (f_N-f_\star) = \dots$.}
+
+
+\todo[inline,color=cyan]{State all claimed multipliers below, not just $\lambda$.}
+
+We consider the index set $\mathcal{I}=\{*,0,1,...,N\}$,
+\[\forall i,j\in \mathcal{I}, Q_{i,j}:=f_i-f_j-\langle g_j,x_i-x_j\rangle -\frac{1}{2L}||g_i-g_j||^2\]
+\[
+V=
+\left(
+s,\,
+g_0,\ldots,g_N,\,
+\epsilon_0,\ldots,\epsilon_{N-1}
+\right)^{T}.
+\]
+\[G=V^{\top}V\]
+We set $L=1$\\
+Next, we define a semidefinite programming problem to represent what we want to solve.
+$\mathcal{R}(F,G):=R^2-||x_0-x_*||^2\quad \mathcal{Q}_{i,j}(F,G):= \forall i,j\in \mathcal{I}, Q_{i,j}:=Q_{i,j} \quad \forall i,j\in \mathcal{I}\quad \mathcal{S}_i(F,G):=\sigma_i^2-||\epsilon_i||^2 \quad $\\
+An essential assumption is:\\
+Class 1: \[\langle\epsilon_k, \epsilon_l \rangle = 0 \quad k \neq l\]
+Class 2: \[\langle \epsilon_k, g_j\rangle = 0 \quad j\le k\]
+Class 3: \[\langle \epsilon_k, x_j-x_* \rangle = 0 \quad j\le k\]
+$F$ is a vector collecting function values from each iteration, that is:
+\[F=[f_*, f_0,f_1, \ldots, f_N]^{\top} \in \mathbb{R}^{N+1}\]
+{\color{red} Use $F=(f_0-f_\star, \dots, f_N-f_\star)$.}
+
+Primal Problem\\
+
+\begin{equation}
+p^\star(h^{(N)}) = p_{\text{gram}}(h^{(N)}) = 
+\left\{
+\begin{aligned}
+    \max_{F,G} \quad & (e_{N+2} - e_1)^{\top} F \\
+    \text{s.t.} \quad & \mathcal{R}(F, G) \ge 0 \\
+    & \mathcal{Q}_{i,j}(F, G) \ge 0 \quad \forall i, j \in \mathcal{I}_N \\
+    & \mathcal{S}_i(F, G) \ge 0 \quad \forall i = 0, \dots, N \\
+    & \mathcal{E}_{k,l}(F,G)=0  \quad \forall\, 0\le l<k\le N-1, \\
+    & \mathcal{G}_{k,j}(F,G)=0  \quad \forall\, 0\le j\le k\le N-1, \\
+    & \mathcal{X}_{k,0}(F,G)=0 \quad \forall\, k=0,\dots,N-1, \\
+    & G \succeq 0.
+\end{aligned}
+\right.
+\end{equation}
+$\mathcal{E}_{k,l}(F,G)=0$ stands for $\langle\epsilon_k, \epsilon_l \rangle = 0$.\\
+$\mathcal{G}_{k,j}(F,G)=0$ stands for $\langle\epsilon_k, g_j \rangle = 0$.\\
+$\mathcal{X}_{k,0}(F,G)=0$ stands for $\langle\epsilon_k, x_0-x_\star \rangle = 0$.
+Since each \(x_j-x_*\) is a linear combination of \(x_0-x_\star\), previous gradients, and previous noise terms, we reduced class 3 to $\mathcal{X}_{k,0}(F,G)=0.$
+We define our multipliers below.\\
+\[ \lambda_{\star,i} = \frac{h_i} {2\sum_{t=i}^{N-1}h_t} \prod_{k=0}^{i-1} \left(1-\frac{h_k}{2\sum_{t=k}^{N-1}h_t}\right),\qquad0\leq i\leq N-1,\]
+\[ \lambda_{\star,N}= \prod_{k=0}^{N-1} \left( 1-\frac{h_k}{2\sum_{t=k}^{N-1}h_t} \right), \]
+\[\lambda_{i,j}=\frac{h_i h_j}{4\left(\sum_{t=i}^{N-1}h_t\right) \left(\sum_{t=j}^{N-1}h_t\right)} \prod_{k=i+1}^{j-1} \left( 1-\frac{h_k}{2\sum_{t=k}^{N-1}h_t} \right), \qquad 0\leq i<j\leq N-1, \]
+\[\lambda_{i,N}=\frac{h_i}{2\sum_{t=i}^{N-1}h_t}\prod_{k=i+1}^{N-1}
+\left(1-\frac{h_k}{2\sum_{t=k}^{N-1}h_t}\right),\qquad 0\leq i\leq N-1,\]
+The dual multiplier for distance constraint.
+\[ \tau = \frac{1} {2\left(1+2\sum_{t=0}^{N-1}h_t\right)}, \]
+Dual multipliers for noise constraint (from bounded variance assumption).
+\[\eta_k=\frac{h_k^2} {2\left(1+2\sum_{t=k+1}^{N-1}h_t\right)}, \qquad 0\leq k\leq N-1, \]
+Dual multipliers for $\mathcal{X}_{k,0}(F,G)=0 \quad \forall\, k=0,\dots,N-1 $
+\[\xi_k= \frac{h_k} {1+2\sum_{t=k+1}^{N-1}h_t} \prod_{m=0}^{k} \left( 1-\frac{h_m}{2\sum_{t=m}^{N-1}h_t} \right), \qquad 0\leq k\leq N-1, \]
+Dual multipliers for that noise in time $k$ should be orthogonal to all history information.(Affine constraints)\\
+Dual multipliers for $\mathcal{G}_{k,j}(F,G)=0  \quad \forall\, 0\le j\le k\le N-1:$
+\[ \mu_{i,k} = - \frac{h_k} {1+2\sum_{t=k+1}^{N-1}h_t} \left( h_i \frac{h_i}{2\sum_{t=i}^{N-1}h_t} \right) \prod_{m=i+1}^{k}
+\left( 1-\frac{h_m}{2\sum_{t=m}^{N-1}h_t} \right), \qquad 0\leq i\leq k\leq N-1,\]
+Dual multipliers for $\mathcal{E}_{k,l}(F,G)=0  \quad \forall\, 0\le l<k\le N-1$:
+\[\nu_{\ell,k} = - \frac{h_\ell h_k} {1+2\sum_{t=k+1}^{N-1}h_t}
+\prod_{m=\ell+1}^{k} \left( 1-\frac{h_m}{2\sum_{t=m}^{N-1}h_t} \right), \qquad 0\leq \ell<k\leq N-1. \]
+Define \[\alpha_i=\frac{h_i}{2\sum_{t=i}^{N-1}h_t}\]
+Then we define and give the closed form of dual multipliers of these nonnegative terms.\\
+Type $1$: $\lambda_{*,i}$ will be:
+\[\alpha_i\prod_{k=0}^{i-1}(1-\alpha_k)\]
+For the brevity of notation, we define $\alpha_i = \frac{h_i}{2 S_i}$.\\
+Type $2$ : For $0\le i< j\le N-1$, $\lambda_{i,j} = \alpha_i \alpha_j \prod_{k=i+1}^{j-1}(1-\alpha_k)$.\\
+Type $3$: For $0\le i < j = N, \lambda_{i,j} = \alpha_i \prod_{k=i+1}^{N-1} (1-\alpha_k)$
+
+We want to prove:
+\[r-(f_N-f_*)=\tau \mathcal{R}+ \eta_i\mathcal{S}_i+ \sum_{i,j\in \mathcal{I}} \lambda_{i,j} \mathcal{Q}_{i,j}+\sum_{t\le k} \mu_{t,k} \mathcal{H}_k + \langle Z,G \rangle\]
+
+\section{Verifying Nonnegativity and Positive Semidefiniteness}
+
+\todo[inline,color=cyan]{Rename this section ``Verifying Nonnegativity and Positive Semidefiniteness''}
+
+\todo[inline,color=cyan]{Stae as a proposition that all your multipliers are nonnegative/psd.}
+
+\todo[inline,color=cyan]{Argue the scalar multipliers are each nonneg (short?)}
+
+\todo[inline,color=cyan]{Then do the below reasoning to conclude Z is psd.}
+
+\begin{proposition} All scalar multipliers are nonnegative.
+\begin{proof}
+ Clearly, $\tau$ and $\eta$ are non-negative.
+ For all other multipliers, notice that $1-\frac{h_m}{\sum_{t\ge m}h_t}\ge 0$ and
+ $h_i-\frac{h_i}{2\sum_{t\ge i} ht} \ge 0$
+\end{proof}
+    
+\end{proposition}
+Then our goal is to prove $\langle Z,G \rangle$ is nonnegative.\\
+\subsection{definition of Z and prove it is PSD}
+\[
+Z=(K_NB_N)^{T}\widehat{W}_N(K_NB_N).
+\] 
+\[
+B_N=\overline{B}_N+\widehat{B}_N,
+\qquad
+B_N\in\mathbb{R}^{(N+1)\times(2N+2)}.
+\]
+
+The columns of \(B_N\) are ordered according to
+\[
+V=
+\left(
+s,\,
+g_0,\ldots,g_N,\,
+\epsilon_0,\ldots,\epsilon_{N-1}
+\right)^T.
+\]
+
+We define
+\[
+\overline{B}_N=
+\begin{pmatrix}
+1 & 0_{1\times(N+1)} & 0_{1\times N}\\
+0_{N\times 1} & \Delta_N & 0_{N\times N}
+\end{pmatrix},
+\]
+where
+\[
+\Delta_N=
+\begin{pmatrix}
+1&-1&0&\cdots&0&0\\
+0&1&-1&\cdots&0&0\\
+0&0&1&\ddots&0&0\\
+\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
+0&0&0&\cdots&1&-1
+\end{pmatrix}
+\in\mathbb{R}^{N\times(N+1)}.
+\]
+
+Let
+\[
+H_N=
+\operatorname{Diag}
+\left(
+\frac{h_0}{1+2S_1},
+\frac{h_1}{1+2S_2},
+\ldots,
+\frac{h_{N-1}}{1+2S_N}
+\right).
+\]
+
+
+\[
+\widehat{B}_N=
+\begin{pmatrix}
+0 & -(1+2S_0)(1,0,\ldots,0) & 0_{1\times N}\\
+0_{N\times1} & 0_{N\times(N+1)} & -H_N
+\end{pmatrix}.
+\]
+
+Sum together
+\[
+B_N=
+\begin{pmatrix}
+1 & -T_0(1,0,\ldots,0) & 0_{1\times N}\\
+0_{N\times1} & \Delta_N & -H_N
+\end{pmatrix}.
+\]
+
+\[B_N=
+\left(
+\begin{array}{ccccccccccc}
+1
+&
+-T_0 & 0 & 0 & \cdots & 0
+&
+0 & 0 & 0 & \cdots & 0
+\\
+0
+&
+1 & -1 & 0 & \cdots & 0
+&
+-\dfrac{h_0}{1+2S_1} & 0 & 0 & \cdots & 0
+\\
+0
+&
+0 & 1 & -1 & \ddots & \vdots
+&
+0 & -\dfrac{h_1}{1+2S_2} & 0 & \ddots & \vdots
+\\
+\vdots
+&
+\vdots & \ddots & \ddots & \ddots & 0
+&
+\vdots & \ddots & \ddots & \ddots & 0
+\\
+0
+&
+0 & \cdots & 0 & 1 & -1
+&
+0 & \cdots & 0 & 0
+&-\dfrac{h_{N-1}}{1+2S_N}
+\end{array}
+\right),
+\]
+where the columns are ordered according to
+\[
+V=
+\left(
+s,\,
+g_0,\ldots,g_N,\,
+\epsilon_0,\ldots,\epsilon_{N-1}
+\right)^{T}.
+\]
+
+
+\[
+S_k:=\sum_{t=k}^{N-1}h_t,
+\qquad
+S_N:=0,
+\qquad
+T_k:=1+2S_k,
+\qquad
+T_N=1,
+\]
+
+
+
+The matrix \(K_N\in\mathbb{R}^{(N+1)\times(N+1)}\)
+\[
+(K_N)_{jk}
+=
+\begin{cases}
+1,
+& j=k=0,
+\\(0.4em]
+\displaystyle
+2\prod_{m=j}^{k-1}(1-\alpha_m),
+& 1\leq j\leq k\leq N,
+\\(0.8em]
+0,
+& \text{otherwise}.
+\end{cases}
+\]
+
+
+\[
+K_N=
+\begin{pmatrix}
+1
+&0
+&0
+&\cdots
+&0
+\\
+0
+&2
+&2(1-\alpha_1)
+&\cdots
+&\displaystyle 2\prod_{m=1}^{N-1}(1-\alpha_m)
+\\
+0
+&0
+&2
+&\cdots
+&\displaystyle 2\prod_{m=2}^{N-1}(1-\alpha_m)
+\\
+\vdots
+&\vdots
+&\ddots
+&\ddots
+&\vdots
+\\
+0
+&0
+&\cdots
+&2
+&2(1-\alpha_{N-1})
+\\
+0
+&0
+&\cdots
+&0
+&2
+\end{pmatrix}.
+\]
+
+
+\[
+\widehat{W}_N
+=
+\Gamma_N
+\oplus d_2
+\oplus\cdots\oplus d_N,
+\]
+where
+\[
+\Gamma_N
+=
+\begin{pmatrix}
+\displaystyle \frac{1}{2(1+2S_0)}
+&
+\displaystyle \frac{1-\alpha_0}{4}
+\\(0.8em]
+\displaystyle \frac{1-\alpha_0}{4}
+&
+\displaystyle \frac{1+2S_1}{8}
+\end{pmatrix},
+\]
+and, for \(j=2,\ldots,N\),
+\[
+d_j
+:=
+\frac{(1+2S_j)-(1+2S_{j-1})(1-\alpha_{j-1})^{\,2}}{8}
+=\frac{
+h_{j-1}
+\left[
+(3-2h_{j-1})S_{j-1}+S_j
+\right]
+}{
+32S_{j-1}^{\,2}
+}\]
+
+
+
+
+
+\[
+\widehat{W}_N
+=
+\begin{pmatrix}
+\Gamma_N
+&
+0
+&
+\cdots
+&
+0
+\\
+0
+&
+d_2
+&&
+0
+\\
+\vdots
+&&
+\ddots
+&
+\vdots
+\\
+0
+&
+0
+&
+\cdots
+&
+d_N
+\end{pmatrix}.
+\]
+To prove that \(Z\) is PSD, it suffices to show that
+\(\widehat{W}_N\) is PSD. Since
+\[
+\widehat{W}_N=\Gamma_N\oplus d_2\oplus\cdots\oplus d_N,
+\]
+it is enough to show that
+$
+\Gamma_N
+$
+is PSD and that \(d_j\geq 0\), for \(j=2,\ldots,N\).
+
+\begin{lemma}
+Suppose
+\[
+0<h_k\leq \frac{3}{2},\quad k=0,\ldots,N-1.
+\]
+\[d_j\ge 0\]
+
+\end{lemma}
+
+\begin{proof}
+Since $h_{j-1}\in (0,\frac{3}{2}]$,
+\[3-2h_{j-1}\ge 0\]
+\[d_j=\frac{
+h_{j-1}
+\left[
+(3-2h_{j-1})S_{j-1}+S_j
+\right]
+}{
+32S_{j-1}^{\,2}
+} \ge 0\]
+\end{proof}
+We find that $\Gamma_N$ can be decomposed as the sum of two rank-one matrices.\\
+Define
+\[\omega=\begin{pmatrix}
+    1\\
+    \frac{(1+2S_0)(1-\alpha_0)}{2}
+\end{pmatrix}\]
+\begin{lemma}[Positive semidefiniteness of the leading block]
+The matrix
+\[
+\Gamma_N=
+\frac{1}{2(1+2S_0)}
+\omega\omega^\top
++
+\frac{
+(1+2S_1)-(1+2S_0)(1-\alpha_0)^2
+}{8}
+e_1e_1^\top.
+\]
+is PSD.
+\end{lemma}
+
+\begin{proof}
+It suffices to show
+\[
+\frac{
+(1+2S_1)-(1+2S_0)(1-\alpha_0)^2
+}{8}\ge 0.
+\]
+Using
+\[
+S_1=S_0-h_0,
+\qquad
+\alpha_0=\frac{h_0}{2S_0},
+\]
+we have
+\[
+\begin{aligned}
+&(1+2S_1)-(1+2S_0)(1-\alpha_0)^2\\
+={}&
+1+2S_0-2h_0
+-(1+2S_0)(1-2\alpha_0+\alpha_0^2)\\
+={}&
+-2h_0+2\alpha_0(1+2S_0)
+-\alpha_0^2(1+2S_0)\\
+={}&
+\alpha_0(2-h_0-\alpha_0).
+\end{aligned}
+\]
+Since \(S_0\ge h_0\),
+\[
+0<\alpha_0=\frac{h_0}{2S_0}\le\frac12.
+\]
+Together with \(h_0\le\frac32\),
+\[
+2-h_0-\alpha_0\ge 0.
+\]
+Hence
+\[
+\frac{
+(1+2S_1)-(1+2S_0)(1-\alpha_0)^2
+}{8}\ge 0.
+\]
+\end{proof}
+
+Combining Lemma $2.2$ and $2.3$,
+\[
+\widehat{W}_N
+=\Gamma_N\oplus d_2\oplus\cdots\oplus d_N\succeq 0.
+\]
+
+\begin{theorem}
+$\langle G,Z \rangle $ is nonnegative.
+\end{theorem}
+
+\begin{proof}
+For any \(v\in\mathbb{R}^{2N+2}\), let
+\[
+y=K_NB_Nv.
+\]
+Then
+\[
+v^TZv
+=v^T(K_NB_N)^T\widehat{W}_N(K_NB_N)v
+=y^T\widehat{W}_Ny\geq 0.
+\]
+Therefore \(Z\succeq 0\).
+And,
+\[G= V^{\top}V\]
+Hence, $\langle G,Z \rangle \ge 0$
+\end{proof}
+
+\section{Verifying Components}
+
+\todo[inline,color=cyan]{State a prop that the needed equality holds for all your multlpiers}
+
+\todo[inline,color=cyan]{Argue term-wise that coefficients match. The $f$ coefficients, the $\|x_0-x_\star\|^2$ coefficient, $\langle x_0-x_\star,g_i\rangle$, \dots}
+
+\begin{lemma}
+    \[\lambda_{*,j}+\sum_{p=0}^{i} \lambda_{p,j} = \alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)\]
+\end{lemma}
+
+\begin{lemma}
+    \[\alpha_i \prod_{k=j+1}^{i-1}(1-\alpha_k) =\prod_{k=j+1}^{i-1}(1-\alpha_k)-\prod_{k=j+1}^{i}(1-\alpha_k)\]
+\end{lemma}
+\begin{lemma}
+\[\sum_{j=0}^{N}\lambda_{*,j}=1\]
+\end{lemma}
+
+
+{\color{cyan}
+
+\subsection{Verification Constant Terms Agree}
+
+
+We now verify that the multipliers defined in Section~5, together with the matrix
+$Z$ defined in Section~6, satisfy the desired PEP identity.
+
+\begin{proposition}
+For every $N\ge 1$ and $h^{(N)}\in(0,1.5]^N$, let
+$\tau$, $\eta_k$, $\lambda_{i,j}$, $\mu_{s,k}$,
+$\mu_{g_i,k}$, $\mu_{\epsilon_\ell,k}$, and $Z$
+be defined as in Sections~5 and~6. Then
+\begin{equation}
+\begin{aligned}
+\frac{D^2}{2(1+2S_0)}+\sum_{k=0}^{N-1} \frac{h_k^2}{2(1+2S_{k+1})}-(f_N-f_\star)
+={}&
+\tau R(F,G)
++
+\sum_{k=0}^{N-1}\eta_k S_k(F,G)
++
+\sum_{i,j\in I}\lambda_{i,j}Q_{i,j}(F,G)
+\\
+&+
+\sum_{t\le k}\mu_{t,k}H_k(F,G)
++
+\langle Z,G\rangle,
+\end{aligned}
+\tag{7.1}
+\end{equation}
+\end{proposition}
+
+We can verify the identity by verifying that each associated coefficient matches between the two sides.
+Since 
+\[\tau = \frac{1}{2(1+2S_0)}\]
+\[\eta_k = \frac{h_k^2}{2(1+2S_{k+1})}\]
+The coefficients of constant terms agree.
+
+
+\subsection{Verification $f_i$ Coefficients Agree}
+Next, we verify that the coefficients of the function values agree on the two sides of~(7.1).
+Only the interpolation constraints $Q_{i,j}$ contain function-value terms.
+Observe that, for the interpolation multipliers, only
+\[\lambda_{\star,j}, \qquad j=0,\ldots,N,\]
+and
+\[\lambda_{i,j}, \qquad 0\le i<j\le N,\]
+are nonzero.
+\begin{lemma}
+    \[\sum_{i,j\in \mathcal{I}} \lambda_{i,j} Q_{i,j}(F)=-(f_N-f_*)\]
+\end{lemma}
+\begin{proof}
+Collecting the coefficient of each function value gives
+\[\sum_{i,j\in I}\lambda_{i,j}(f_i-f_j)=\sum_{j=0}^{N-1}
+\Big(\sum_{i=j+1}^{N}\lambda_{j,i}-\lambda_{\star,j}-\sum_{i=0}^{j-1}\lambda_{i,j}\Big)f_j-
+\Big(\lambda_{\star,N}+\sum_{i=0}^{N-1}\lambda_{i,N}\Big)f_N
++\Big(\sum_{j=0}^{N}\lambda_{\star,j}\Big)f_\star.\]
+
+By Lemma~7.1, for every $0\le j\le N-1$,
+\[\lambda_{\star,j}+\sum_{i=0}^{j-1}\lambda_{i,j}=\alpha_j.\]
+
+On the other hand, using the closed-form multipliers,
+\[\sum_{i=j+1}^{N}\lambda_{j,i}=\alpha_j
+\Big(\sum_{i=j+1}^{N-1}\alpha_i\prod_{k=j+1}^{i-1}(1-\alpha_k)+\prod_{k=j+1}^{N-1}(1-\alpha_k)\Big)\]
+\[=\alpha_j\Big(\sum_{i=j+1}^{N-1}
+\Big(\prod_{k=j+1}^{i-1}(1-\alpha_k)-\prod_{k=j+1}^{i}(1-\alpha_k)\Big)+\prod_{k=j+1}^{N-1}(1-\alpha_k)\Big)\]
+\[=\alpha_j\Big(1+\sum_{i=j+1}^{N-2}\prod_{k=j+1}^{i}(1-\alpha_k)-\sum_{i=j+1}^{N-2}
+\prod_{k=j+1}^{i}(1-\alpha_k)-\prod_{k=j+1}^{N-1}(1-\alpha_k)+\prod_{k=j+1}^{N-1}(1-\alpha_k)\Big)\]
+\[=\alpha_j.\]
+
+The second equality is from Lemma~7.2 and the third equality is from
+$\prod_{k=j+1}^{j}(1-\alpha_k)=1$.
+
+With Lemma~7.1, for every $j=0,\ldots,N-1$, the coefficient of $f_j$ is
+\[\alpha_j-\alpha_j=0.\]
+
+Since
+\[\lambda_{\star,N}+\sum_{i=0}^{N-1}\lambda_{i,N}=1,\]
+the coefficient of $f_N$ is $-1$.
+
+The coefficient of $f_\star$ is
+\[\sum_{j=0}^{N}\lambda_{\star,j}=1.\]
+\end{proof}
+
+
+
+\subsection{Verification $\|x_0-x_\star\|^2$ Coefficients Agree}
+There are two sources for $\|x_0-x_\star\|^2$: $\tau R(F,G)$ and $\langle Z,G\rangle$, both of which are on the right hand side of $(7.1)$.
+Since
+\[R(F,G)=D^2-\|x_0-x_\star\|^2,\]
+the coefficient from $\tau R(F,G)$ is $-\tau$.
+
+Recall
+\[Z=(K_NB_N)^T\widehat{W}_N(K_NB_N).\]
+The column of $B_N$ corresponding to $x_0-x_\star$ is $e_1$, and $K_Ne_1=e_1$.
+Hence, the coefficient of $\|x_0-x_\star\|^2$ in $\langle Z,G\rangle$ is
+\[(\widehat{W}_N)_{1,1}=(\Gamma_N)_{1,1}=\tau.\]
+Therefore, the coefficient of $\|x_0-x_\star\|^2$ on the right hand side of $(7.1)$ is
+\[-\tau+\tau=0.\]
+
+
+
+\subsection{Verification $\langle g_i, x_0-x_\star\rangle$ Coefficients Agree}
+We consider coefficients of off-diagonal terms in the deterministic part. Two sources are
+$\lambda_{*,i}Q_{*,i}$ and $\langle Z,G \rangle$. We need to show coefficients for $\langle g_i, x_0-x_* \rangle$ is equal to $-\lambda_{*,i}$
+The column of $B_N$ corresponding to $x_0-x_\star$ is $e_1$, and \[K_Ne_1=e_1.\]
+Since $\widehat{W}_N$ is block diagonal, only the first two entries of the column of $K_NB_N$ corresponding to $g_i$ contribute to $\langle g_i,x_0-x_\star\rangle$.
+For $i=0$, the column of $B_N$ corresponding to $g_0$ is \[-(1+2S_0)e_1+e_2.\]
+Hence,\[K_N(-(1+2S_0)e_1+e_2)=-(1+2S_0)e_1+2e_2.\]
+Therefore,\[e_1^T\widehat{W}_N K_N(-(1+2S_0)e_1+e_2)=-\frac{1+2S_0}{2(1+2S_0)}+2\frac{1-\alpha_0}{4}\]
+\[=-\frac{1}{2}+\frac{1-\alpha_0}{2}=-\frac{\alpha_0}{2}.\]
+For $1\le i\le N-1$, the column of $B_N$ corresponding to $g_i$ is
+\[-e_{i+1}+e_{i+2}.\]
+The second entry of $K_N(-e_{i+1}+e_{i+2})$ is
+\[-2\prod_{m=1}^{i-1}(1-\alpha_m)+2\prod_{m=1}^{i}(1-\alpha_m)\]
+\[=-2\alpha_i\prod_{m=1}^{i-1}(1-\alpha_m).\]
+Therefore,
+\[e_1^T\widehat{W}_N K_N(-e_{i+1}+e_{i+2})=\frac{1-\alpha_0}{4}\left(-2\alpha_i\prod_{m=1}^{i-1}(1-\alpha_m)\right)\]
+\[=-\frac{1}{2} \alpha_i\prod_{m=0}^{i-1}(1-\alpha_m) = -\frac{\lambda_{\star,i}}{2}.\]
+Since $\langle g_i,x_0-x_\star\rangle$ is an off-diagonal Gram term, its coefficient
+in $\langle Z,G\rangle$ is
+\[-\lambda_{\star,i}.\]
+For $i=N$, the column of $B_N$ corresponding to $g_N$ is
+\[-e_{N+1}.\]
+The second entry of $K_N(-e_{N+1})$ is
+\[-2\prod_{m=1}^{N-1}(1-\alpha_m).\]
+Therefore,
+\[e_1^T\widehat{W}_N K_N(-e_{N+1})=\frac{1-\alpha_0}{4}\left(-2\prod_{m=1}^{N-1}(1-\alpha_m)
+\right)\]
+\[=-\frac{1}{2} \prod_{m=0}^{N-1}(1-\alpha_m) = -\frac{\lambda_{\star,N}}{2}.\]
+Hence, the coefficient of $\langle g_N,x_0-x_\star\rangle$ in
+$\langle Z,G\rangle$ is \[-\lambda_{\star,N}. \]
+\begin{remark}
+    Lemma form? And try to find a general way for the three types of multipliers.
+\end{remark}
+
+
+\subsection{Verification $\langle \epsilon_i, x_0-x_\star\rangle$ Coefficients Agree}
+There are two sources for $\langle \epsilon_i,x_0-x_\star\rangle$:
+the history orthogonality term with multiplier $\mu_{s,i}$ and$\langle Z,G\rangle$.
+By definition,
+\[\mu_{s,i}=\frac{h_i}{1+2S_{i+1}}\prod_{m=0}^{i}(1-\alpha_m).\]
+Recall that
+\[Z=(K_NB_N)^T\widehat{W}_N(K_NB_N).\]
+The columns of $B_N$ corresponding to $x_0-x_\star$ and $\epsilon_i$ are
+\[e_1\qquad\text{and}\qquad-\frac{h_i}{1+2S_{i+1}}e_{i+2}.\]
+Since $K_Ne_1=e_1$, and the second entry of $K_Ne_{i+2}$ is
+\[2\prod_{m=1}^{i}(1-\alpha_m),\]
+we have\[e_1^TK_N^T\widehat{W}_NK_Ne_{i+2}=\frac{1-\alpha_0}{4}\cdot2\prod_{m=1}^{i}(1-\alpha_m)\]
+\[=\frac{1}{2}\prod_{m=0}^{i}(1-\alpha_m).\]
+Since $\langle \epsilon_i,x_0-x_\star\rangle$ is an off-diagonal Gram term,
+its coefficient in $\langle Z,G\rangle$ is
+\[-2\frac{h_i}{1+2S_{i+1}}e_1^TK_N^T\widehat{W}_NK_Ne_{i+2}\]
+\[=-\frac{h_i}{1+2S_{i+1}}\prod_{m=0}^{i}(1-\alpha_m)\]
+\[=-\mu_{s,i}.\]
+Therefore, the coefficient of $\langle \epsilon_i,x_0-x_\star\rangle$ on the right hand side of $(7.1)$ is \[\mu_{s,i}-\mu_{s,i}=0.\]
+
+\subsection{Verification $\langle g_i, g_j\rangle$ Coefficients Agree}
+\subsubsection{$\|g_i\|^2$}
+\begin{lemma}
+    Sum of coefficients of $\|g_i\|^2$ from $\sum_{i,j \in \mathcal{I}}\lambda_{i,j} Q_{i,j}$ and $\langle Z,G \rangle$ equals to zero.
+\end{lemma}
+\begin{proof}
+    For $0 \le i \le N-1$, the coefficient of $\|g_i\|^2$ is $- \frac{1}{2} (\lambda_{*,i} +\sum_{p=0}^{i-1} \lambda_{p,i} + \sum_{j=i+1}^N \lambda_{i,j})$\\
+    By Lemma~7.1, \[\lambda_{\star,i}+\sum_{p=0}^{i-1}\lambda_{p,i}=\alpha_i.\]
+    See section 7.2, we have \[\sum_{j=i+1}^{N} \lambda_{i,j} = \alpha_i\]
+    Hence coefficient of $\|g_i\|^2$ from $\sum_{i,j \in \mathcal{I}}\lambda_{i,j} Q_{i,j}$
+    is $-\alpha_i.$ for $0 \le i \le N-1.$\\
+    Coefficient of $\|g_N\|^2$ from interpolation term is $-\frac{1}{2}.$, recall that $\alpha_N =1$ and we define $\prod_{a}^{b} (1-\alpha_a)=1.$
+    For $i=0$, the column of $B_N$ corresponding to $g_0$ is
+    \[-(1+2S_0)e_1+e_2.\]
+    Hence,
+    \[K_N(-(1+2S_0)e_1+e_2)=-(1+2S_0)e_1+2e_2.\]
+    Therefore, the coefficient of $\|g_0\|^2$ from $\langle Z,G\rangle$ is
+    \[\frac{1+2S_0}{2}-(1+2S_0)(1-\alpha_0)+\frac{1+2S_1}{2}\]
+    \[=\frac{1+2S_1-(1+2S_0)}{2}+(1+2S_0)\alpha_0\]
+    \[=-h_0+(1+2S_0)\alpha_0\]
+    \[=-h_0+\alpha_0+h_0=\alpha_0.\]
+    For $1\le i\le N-1$, the column of $B_N$ corresponding to $g_i$ is
+    \[-e_{i+1}+e_{i+2}.\]
+    By the definition of $K_N$,
+    \[K_N(-e_{i+1}+e_{i+2})=-2\alpha_i\sum_{r=1}^{i}\prod_{m=r}^{i-1}(1-\alpha_m)e_{r+1}+ 2e_{i+2}.\]
+    Hence, the coefficient of $\|g_i\|^2$ from $\langle Z,G\rangle$ is
+    \[ 4\alpha_i^2 \left( \frac{1+2S_1}{8} \prod_{m=1}^{i-1}(1-\alpha_m)^2 + 
+    \sum_{r=2}^{i} d_r \prod_{m=r}^{i-1}(1-\alpha_m)^2 \right) + 4d_{i+1}. \]
+    By the definition of $d_r$, \[ \frac{1+2S_1}{8}\prod_{m=1}^{i-1}(1-\alpha_m)^2 +\sum_{r=2}^{i}d_r\prod_{m=r}^{i-1}(1-\alpha_m)^2 \]
+\[ = \frac{1}{8} \left( (1+2S_1)\prod_{m=1}^{i-1}(1-\alpha_m)^2 + \sum_{r=2}^{i} 
+\left( (1+2S_r)\prod_{m=r}^{i-1}(1-\alpha_m)^2 - (1+2S_{r-1})\prod_{m=r-1}^{i-1}(1-\alpha_m)^2 \right) \right) \]
+\[ = \frac{1+2S_i}{8}, \]
+where the last equality follows from telescoping.
+Therefore, the coefficient of $\|g_i\|^2$ from $\langle Z,G\rangle$ is
+\[\frac{\alpha_i^2(1+2S_i)}{2}+4d_{i+1}\]
+\[=\frac{1}{2}
+\left(
+\alpha_i^2(1+2S_i)+(1+2S_{i+1})-(1+2S_i)(1-\alpha_i)^2
+\right)\]
+\[=\alpha_i(1+2S_i)-h_i=\alpha_i.\]
+For $i=N$, the column of $B_N$ corresponding to $g_N$ is
+\[-e_{N+1}.\]
+Hence,
+\[K_N(-e_{N+1})=-2\sum_{r=1}^{N}\prod_{m=r}^{N-1}(1-\alpha_m)e_{r+1}.\]
+Therefore, the coefficient of $\|g_N\|^2$ from $\langle Z,G\rangle$ is
+\[ 4\left(\frac{1+2S_1}{8}\prod_{m=1}^{N-1}(1-\alpha_m)^2+\sum_{r=2}^{N}d_r\prod_{m=r}^{N-1}(1-\alpha_m)^2\right).\]
+By the same telescoping argument above,
+\[4\left(\frac{1+2S_N}{8}\right)=\frac{1}{2},\] since $S_N=0$.
+\end{proof}
+\subsubsection{$\langle g_i, g_j \rangle \quad i<j$}
+\begin{remark}
+    One source of $\langle g_i, g_j \rangle$ is $x_p -x_j = \sum_{k=p}^{j-1}h_k(g_k+\epsilon_k)$, so if $p \le i$, it will contribute.\\
+    In total, it is $-h_i(\lambda_{*,j}+ \sum_{p=0}^{i} \lambda_{p,j})=-h_i(\alpha_j \prod_{m=i+1}^{j-1}(1-\alpha_m))$
+    Another source is from the norm square term: 
+    \[-\frac{1}{2}\lambda_{i,j} \|g_i-g_j\|^2\]
+    For $\langle Z,G \rangle$, we 
+\end{remark}
+\begin{lemma}
+    Agrees
+\end{lemma}
+\begin{proof}
+\[-h_i\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m).\]
+From\[-\frac{1}{2}\lambda_{i,j}\|g_i-g_j\|^2,\]
+the coefficient of $\langle g_i,g_j\rangle$ is $\lambda_{i,j}$. Hence, the total coefficient from the interpolation terms is\[-h_i\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)+\lambda_{i,j}\]
+\[=-h_i\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)+\alpha_i\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)\]
+\[=-(h_i-\alpha_i)\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m).\]
+We then consider the coefficient from $\langle Z,G\rangle$.
+Recall that
+\[Z=(K_NB_N)^T\widehat{W}_N(K_NB_N).\]
+From the calculation for $\langle \epsilon_i,\epsilon_j\rangle$, for
+$0\le p\le q\le N-1$,\[e_{p+2}^T K_N^T\widehat{W}_NK_Ne_{q+2}=\frac{1+2S_{p+1}}{2}
+\prod_{m=p+1}^{q}(1-\alpha_m).\]
+Also, from the definition of $\Gamma_N$ and $K_N$,
+\[e_1^T K_N^T\widehat{W}_NK_Ne_{q+2}=\frac{1}{2}\prod_{m=0}^{q}(1-\alpha_m).\]
+First, consider $1\le i<j\le N-1$.
+The columns of $B_N$ corresponding to $g_i$ and $g_j$ are
+\[-e_{i+1}+e_{i+2}\qquad\text{and}\qquad-e_{j+1}+e_{j+2}.\]
+Since $\langle g_i,g_j\rangle$ is an off-diagonal Gram term, its coefficient in
+$\langle Z,G\rangle$ is
+\[2(-e_{i+1}+e_{i+2})^T K_N^T\widehat{W}_NK_N (-e_{j+1}+e_{j+2})\]
+\[=(1+2S_i)\prod_{m=i}^{j-1}(1-\alpha_m)-(1+2S_i)\prod_{m=i}^{j}(1-\alpha_m)\]
+\[-(1+2S_{i+1})\prod_{m=i+1}^{j-1}(1-\alpha_m)+(1+2S_{i+1})\prod_{m=i+1}^{j}(1-\alpha_m)\]
+\[=\alpha_j \prod_{m=i+1}^{j-1}(1-\alpha_m) \left((1+2S_i)(1-\alpha_i)-(1+2S_{i+1})\right).\]
+Using $S_{i+1}=S_i-h_i$,
+\[(1+2S_i)(1-\alpha_i)-(1+2S_{i+1})\]
+\[=2h_i-\alpha_i(1+2S_i)\]
+\[=2h_i-(h_i+\alpha_i)=h_i-\alpha_i.\]
+Therefore, the coefficient from $\langle Z,G\rangle$ is
+\[(h_i-\alpha_i)\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m).\]
+For $i=0$ and $1\le j\le N-1$, the columns of $B_N$ corresponding to
+$g_0$ and $g_j$ are
+\[-(1+2S_0)e_1+e_2\qquad\text{and}\qquad-e_{j+1}+e_{j+2}.\]
+Hence, the coefficient from $\langle Z,G\rangle$ is
+\[2(-(1+2S_0)e_1+e_2)^T K_N^T\widehat{W}_NK_N(-e_{j+1}+e_{j+2})\]
+\[=(1+2S_0)\prod_{m=0}^{j-1}(1-\alpha_m)-(1+2S_0)\prod_{m=0}^{j}(1-\alpha_m)\]
+\[-(1+2S_1)\prod_{m=1}^{j-1}(1-\alpha_m)+(1+2S_1)\prod_{m=1}^{j}(1-\alpha_m)\]
+\[=\alpha_j\prod_{m=1}^{j-1}(1-\alpha_m)\left((1+2S_0)(1-\alpha_0)-(1+2S_1)\right)\]
+\[=(h_0-\alpha_0)\alpha_j\prod_{m=1}^{j-1}(1-\alpha_m).\]
+For $j=N$.
+For $1\le i\le N-1$, the columns of $B_N$ corresponding to $g_i$ and $g_N$ are
+\[-e_{i+1}+e_{i+2}\qquad\text{and}\qquad-e_{N+1}.\]
+Hence, the coefficient from $\langle Z,G\rangle$ is
+\[2(-e_{i+1}+e_{i+2})^TK_N^T\widehat{W}_NK_N(-e_{N+1})\]
+\[=(1+2S_i)\prod_{m=i}^{N-1}(1-\alpha_m)-(1+2S_{i+1})\prod_{m=i+1}^{N-1}(1-\alpha_m)\]
+\[=\left((1+2S_i)(1-\alpha_i)-(1+2S_{i+1})\right)\prod_{m=i+1}^{N-1}(1-\alpha_m)\]
+\[=(h_i-\alpha_i)\prod_{m=i+1}^{N-1}(1-\alpha_m).\]
+For $i=0$ and $j=N$,
+\[2(-(1+2S_0)e_1+e_2)^T K_N^T\widehat{W}_NK_N(-e_{N+1})\]
+\[=(1+2S_0)\prod_{m=0}^{N-1}(1-\alpha_m)-(1+2S_1)\prod_{m=1}^{N-1}(1-\alpha_m)\]
+\[=(h_0-\alpha_0)\prod_{m=1}^{N-1}(1-\alpha_m).\]
+Therefore, using $\alpha_N=1$, for every $0\le i<j\le N$, the coefficient of
+$\langle g_i,g_j\rangle$ from $\langle Z,G\rangle$ is
+\[(h_i-\alpha_i)\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m).\]
+\end{proof}
+
+\subsection{Verification $\langle g_i, \epsilon_j\rangle$ Coefficients Agree}
+
+
+\subsection{Verification $\langle \epsilon_i,\epsilon_j\rangle$ Coefficients Agree}
+We consider the diagonal terms $\|\epsilon_i\|^2$ and the off-diagonal terms 
+$\langle \epsilon_i,\epsilon_j\rangle$ separately.
+\subsubsection{$\|\epsilon_i\|^2$}
+There are two sources for $\|\epsilon_i\|^2$: $\eta_i S_i(F,G)$ and $\langle Z,G\rangle$.
+Since
+\[S_i(F,G)=\sigma_i^2-\|\epsilon_i\|^2,\]
+the coefficient from $\eta_i S_i(F,G)$ is
+\[-\eta_i=-\frac{h_i^2}{2(1+2S_{i+1})}.\]
+Recall that
+\[Z=(K_NB_N)^T\widehat{W}_N(K_NB_N).\]
+The column of $B_N$ corresponding to $\epsilon_i$ is
+\[-\frac{h_i}{1+2S_{i+1}}e_{i+2}.\]
+Hence, the coefficient of $\|\epsilon_i\|^2$ in $\langle Z,G\rangle$ is
+\[\frac{h_i^2}{(1+2S_{i+1})^2}e_{i+2}^T K_N^T\widehat{W}_N K_N e_{i+2}.\]
+By the definition of $K_N$,
+\[K_Ne_{i+2}=2\sum_{r=1}^{i+1}\prod_{m=r}^{i}(1-\alpha_m)e_{r+1}.\]
+Therefore,
+\[e_{i+2}^T K_N^T\widehat{W}_N K_Ne_{i+2}=4\left(\frac{1+2S_1}{8}\prod_{m=1}^{i}(1-\alpha_m)^2+\sum_{r=2}^{i+1} d_r\prod_{m=r}^{i}(1-\alpha_m)^2\right)\]
+\[=\frac{1}{2}\left((1+2S_1)\prod_{m=1}^{i}(1-\alpha_m)^2+\sum_{r=2}^{i+1}\left(
+(1+2S_r)-(1+2S_{r-1})(1-\alpha_{r-1})^2\right)\prod_{m=r}^{i}(1-\alpha_m)^2\right)\]
+\[=\frac{1}{2}\left((1+2S_1)\prod_{m=1}^{i}(1-\alpha_m)^2+\sum_{r=2}^{i+1}(1+2S_r)\prod_{m=r}^{i}(1-\alpha_m)^2-\sum_{r=2}^{i+1}(1+2S_{r-1})\prod_{m=r-1}^{i}(1-\alpha_m)^2\right)\]
+\[=\frac{1+2S_{i+1}}{2}.\]
+
+Hence, the coefficient from $\langle Z,G\rangle$ is
+\[\frac{h_i^2}{(1+2S_{i+1})^2}\frac{1+2S_{i+1}}{2}=\frac{h_i^2}{2(1+2S_{i+1})}
+=\eta_i.\]
+Therefore, the coefficient of $\|\epsilon_i\|^2$ on the right hand side of $(7.1)$ is
+\[-\eta_i+\eta_i=0.\]
+
+\subsubsection{$\langle \epsilon_i,\epsilon_j\rangle$}
+
+Consider $0\le i<j\le N-1$.
+There are two sources for $\langle \epsilon_i,\epsilon_j\rangle$: 
+the history orthogonality term with multiplier $\mu_{\epsilon_i,j}$ 
+and $\langle Z,G\rangle$.
+
+The columns of $B_N$ corresponding to $\epsilon_i$ and $\epsilon_j$ are
+\[-\frac{h_i}{1+2S_{i+1}}e_{i+2}\qquad\text{and}\qquad
+-\frac{h_j}{1+2S_{j+1}}e_{j+2}.\]
+Since $\langle \epsilon_i,\epsilon_j\rangle$ is an off-diagonal Gram term, 
+its coefficient in $\langle Z,G\rangle$ is
+\[2\frac{h_ih_j}{(1+2S_{i+1})(1+2S_{j+1})}e_{i+2}^T K_N^T\widehat{W}_N K_Ne_{j+2}.\]
+
+Using the definition of $K_N$,
+\[e_{i+2}^T K_N^T\widehat{W}_N K_Ne_{j+2}=4\left(\frac{1+2S_1}{8}\prod_{m=1}^{i}(1-\alpha_m)
+\prod_{m=1}^{j}(1-\alpha_m)+\sum_{r=2}^{i+1} d_r\prod_{m=r}^{i}(1-\alpha_m)\prod_{m=r}^{j}(1-\alpha_m)\right)\]
+\[=4\prod_{m=i+1}^{j}(1-\alpha_m)\left(\frac{1+2S_1}{8}\prod_{m=1}^{i}(1-\alpha_m)^2+
+\sum_{r=2}^{i+1} d_r\prod_{m=r}^{i}(1-\alpha_m)^2\right)\]
+\[=\frac{1+2S_{i+1}}{2}\prod_{m=i+1}^{j}(1-\alpha_m).\]
+
+Hence, the coefficient from $\langle Z,G\rangle$ is
+\[2\frac{h_ih_j}{(1+2S_{i+1})(1+2S_{j+1})}\frac{1+2S_{i+1}}{2}\prod_{m=i+1}^{j}(1-\alpha_m)
+=\frac{h_ih_j}{1+2S_{j+1}}\prod_{m=i+1}^{j}(1-\alpha_m).\]
+
+By the definition of $\mu_{\epsilon_i,j}$,
+\[\mu_{\epsilon_i,j}=-\frac{h_ih_j}{1+2S_{j+1}}\prod_{m=i+1}^{j}(1-\alpha_m).\]
+Therefore, the coefficient of $\langle \epsilon_i,\epsilon_j\rangle$ on the right hand side of $(7.1)$ is\[\mu_{\epsilon_i,j}-\mu_{\epsilon_i,j}=0.\]
+}
+
+
+\section{Section 3 renew}
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
+
