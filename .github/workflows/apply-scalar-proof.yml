@@ -14,19 +14,11 @@ jobs:
         shell: python
         run: |
           from pathlib import Path
+          import base64
           p = Path('main.tex')
           text = p.read_text()
-          old = r'''\subsection{Verify Multipliers are non-negative and Prove Positive Semidefiniteness}
-\subsection{Coefficients Match}'''
-          new = r'''\subsection{Verify Multipliers are non-negative and Prove Positive Semidefiniteness}
-\begin{proposition}
-The multipliers associated with the inequality constraints satisfy $\tau\ge0$, $\eta_k\ge0$, $\lambda_{\star,j}\ge0$, and $\lambda_{i,j}\ge0$.
-\end{proposition}
-\begin{proof}
-Since $R_k\ge h_k>0$, we have $0<\alpha_k=h_k/(2R_k)\le1/2$ for $k=0,\ldots,N-1$. Hence every factor in the nonzero interpolation multipliers is nonnegative, so all $\lambda_{\star,j}$ and $\lambda_{i,j}$ are nonnegative; the nonnegativity of $\tau$ and $\eta_k$ is immediate from their definitions.
-\end{proof}
-It remains to show $Z\succeq0$.
-\subsection{Coefficients Match}'''
+          old = base64.b64decode('XHN1YnNlY3Rpb257VmVyaWZ5IE11bHRpcGxpZXJzIGFyZSBub24tbmVnYXRpdmUgYW5kIFByb3ZlIFBvc2l0aXZlIFNlbWlkZWZpbml0ZW5lc3N9ClxzdWJzZWN0aW9ue0NvZWZmaWNpZW50cyBNYXRjaH0=').decode()
+          new = base64.b64decode('XHN1YnNlY3Rpb257VmVyaWZ5IE11bHRpcGxpZXJzIGFyZSBub24tbmVnYXRpdmUgYW5kIFByb3ZlIFBvc2l0aXZlIFNlbWlkZWZpbml0ZW5lc3N9ClxiZWdpbntwcm9wb3NpdGlvbn0KVGhlIG11bHRpcGxpZXJzIGFzc29jaWF0ZWQgd2l0aCB0aGUgaW5lcXVhbGl0eSBjb25zdHJhaW50cyBzYXRpc2Z5ICRcdGF1XGdlMCQsICRcZXRhX2tcZ2UwJCwgJFxsYW1iZGFfe1xzdGFyLGp9XGdlMCQsIGFuZCAkXGxhbWJkYV97aSxqfVxnZTAkLgpcZW5ke3Byb3Bvc2l0aW9ufQpcYmVnaW57cHJvb2Z9ClNpbmNlICRSX2tcZ2UgaF9rPjAkLCB3ZSBoYXZlICQwPFxhbHBoYV9rPWhfay8oMlJfaylcbGUxLzIkIGZvciAkaz0wLFxsZG90cyxOLTEkLiBIZW5jZSBldmVyeSBmYWN0b3IgaW4gdGhlIG5vbnplcm8gaW50ZXJwb2xhdGlvbiBtdWx0aXBsaWVycyBpcyBub25uZWdhdGl2ZSwgc28gYWxsICRcbGFtYmRhX3tcc3RhcixqfSQgYW5kICRcbGFtYmRhX3tpLGp9JCBhcmUgbm9ubmVnYXRpdmU7IHRoZSBub25uZWdhdGl2aXR5IG9mICRcdGF1JCBhbmQgJFxldGFfayQgaXMgaW1tZWRpYXRlIGZyb20gdGhlaXIgZGVmaW5pdGlvbnMuClxlbmR7cHJvb2Z9Ckl0IHJlbWFpbnMgdG8gc2hvdyAkWlxzdWNjZXEwJC4KXHN1YnNlY3Rpb257Q29lZmZpY2llbnRzIE1hdGNofQ==').decode()
           assert text.count(old) == 1, text.count(old)
           p.write_text(text.replace(old, new, 1))
       - name: Commit change
