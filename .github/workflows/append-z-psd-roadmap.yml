@@ -16,11 +16,10 @@ jobs:
           from pathlib import Path
           p=Path('main.tex')
           text=p.read_text()
-          old="It remains to show $Z\\succeq0$.\n\\subsection{Coefficients Match}"
-          paragraph="To prove that the Gram multiplier $Z$ is positive semidefinite, we exploit its factorized construction rather than analyze $Z$ entrywise. Since $Z$ is obtained by a congruence transformation of $\\widehat W_N$, it suffices to show that $\\widehat W_N$ is positive semidefinite. The latter has a simple block-diagonal structure, so the proof reduces to verifying nonnegativity of the scalar blocks $d_j$ and positive semidefiniteness of the leading $2\\times2$ block $\\Gamma_N$. These two verifications are exactly where the short-step condition $h_k\\le3/2$ enters."
-          new="It remains to show $Z\\succeq0$.\n"+paragraph+"\n\\subsection{Coefficients Match}"
+          old=r'It remains to show $Z\succeq0$.'
+          paragraph=r'To prove that the Gram multiplier $Z$ is positive semidefinite, we exploit its factorized construction rather than analyze $Z$ entrywise. Since $Z$ is obtained by a congruence transformation of $\widehat W_N$, it suffices to show that $\widehat W_N$ is positive semidefinite. The latter has a simple block-diagonal structure, so the proof reduces to verifying nonnegativity of the scalar blocks $d_j$ and positive semidefiniteness of the leading $2\times2$ block $\Gamma_N$. These two verifications are exactly where the short-step condition $h_k\le3/2$ enters.'
           assert text.count(old)==1, text.count(old)
-          p.write_text(text.replace(old,new,1))
+          p.write_text(text.replace(old,old+'\n'+paragraph,1))
           PY
       - name: Commit change
         run: |
