@@ -1129,11 +1129,11 @@ Taylor, Hendrickx, and Glineur~\cite{taylor2017smooth}, any
 $L$-smooth convex function satisfies, for every $i,j\in\mathcal I_N$,
 \[ f_i-f_j -\langle g_j,x_i-x_j\rangle -\frac{1}{2L}\|g_i-g_j\|^2 \geq 0. \]
 Define the interpolation quantities
-\[ \mathcal Q_{i,j}(F,G) := f_i-f_j -\langle g_j,x_i-x_j\rangle -\frac{1}{2L}\|g_i-g_j\|^2, \qquad i,j\in\mathcal I_N . \]
+\[\mathcal Q_{i,j}(F,G):=(f_i-f_\star)-(f_j-f_\star)-\langle g_j,x_i-x_j\rangle-\frac{1}{2L}\|g_i-g_j\|^2,\qquad i,j\in\mathcal I_N.\]
 To express these quantities using finitely many variables, following the
 stochastic PEP framework of Rubbens, Colla, and
-Hendrickx~\cite{rubbens2025}, collect the function values in
-\[ F= \left( f_\star, f_0, \ldots, f_N \right)^\top \]
+Hendrickx~\cite{rubbens2025}, collect the function-value gaps in
+\[F=(f_0-f_\star,\ldots,f_N-f_\star)^\top\in\mathbb R^{N+1}.\]
 and the vectors appearing along the trajectory in
 \[ V=
 \begin{bmatrix}
@@ -1180,7 +1180,7 @@ following semidefinite relaxation:
 p_{\mathrm{gram}}(h,L,D,\sigma^2) =
 \left\{ \begin{aligned}
 \max_{F,G}\quad
-    &(e_{N+2}-e_1)^\top F
+    &e_{N+1}^\top F
 \\
 \mathrm{s.t.}\quad
     &\mathcal R(F,G)\geq0,
