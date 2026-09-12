@@ -1283,6 +1283,13 @@ The Gram multiplier in \eqref{eq:certificate-identity} is
 These formulas completely specify the certificate in \eqref{eq:certificate-identity}. In the next subsection, we verify that the multipliers associated with inequality constraints are nonnegative
 and that $Z\succeq0$.
 \subsection{Verify Multipliers are non-negative and Prove Positive Semidefiniteness}
+\begin{proposition}
+The multipliers associated with the inequality constraints satisfy $\tau\ge0$, $\eta_k\ge0$, $\lambda_{\star,j}\ge0$, and $\lambda_{i,j}\ge0$.
+\end{proposition}
+\begin{proof}
+Since $R_k\ge h_k>0$, we have $0<\alpha_k=h_k/(2R_k)\le1/2$ for $k=0,\ldots,N-1$. Hence every factor in the nonzero interpolation multipliers is nonnegative, so all $\lambda_{\star,j}$ and $\lambda_{i,j}$ are nonnegative; the nonnegativity of $\tau$ and $\eta_k$ is immediate from their definitions.
+\end{proof}
+It remains to show $Z\succeq0$.
 \subsection{Coefficients Match}
 
 
