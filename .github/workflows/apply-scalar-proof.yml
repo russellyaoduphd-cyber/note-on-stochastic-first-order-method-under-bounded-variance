@@ -1,0 +1,38 @@
+name: Apply scalar multiplier proof
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-scalar-proof.yml'
+permissions:
+  contents: write
+jobs:
+  edit-main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch main.tex
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('main.tex')
+          text = p.read_text()
+          old = r'''\subsection{Verify Multipliers are non-negative and Prove Positive Semidefiniteness}
+\subsection{Coefficients Match}'''
+          new = r'''\subsection{Verify Multipliers are non-negative and Prove Positive Semidefiniteness}
+\begin{proposition}
+The multipliers associated with the inequality constraints satisfy $\tau\ge0$, $\eta_k\ge0$, $\lambda_{\star,j}\ge0$, and $\lambda_{i,j}\ge0$.
+\end{proposition}
+\begin{proof}
+Since $R_k\ge h_k>0$, we have $0<\alpha_k=h_k/(2R_k)\le1/2$ for $k=0,\ldots,N-1$. Hence every factor in the nonzero interpolation multipliers is nonnegative, so all $\lambda_{\star,j}$ and $\lambda_{i,j}$ are nonnegative; the nonnegativity of $\tau$ and $\eta_k$ is immediate from their definitions.
+\end{proof}
+It remains to show $Z\succeq0$.
+\subsection{Coefficients Match}'''
+          assert text.count(old) == 1, text.count(old)
+          p.write_text(text.replace(old, new, 1))
+      - name: Commit change
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add main.tex
+          git commit -m 'Add concise proof of scalar multiplier nonnegativity'
+          git push
