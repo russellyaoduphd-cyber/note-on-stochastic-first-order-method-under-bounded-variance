@@ -1119,42 +1119,34 @@ Therefore, the coefficient of $\langle \epsilon_i,\epsilon_j\rangle$ on the righ
 Section~\ref{sec:LB} showed that the bound in Theorem~\ref{thm:main-rate} is attained by an explicit worst-case problem instance. We now prove the matching upper bound for every problem instance when $h\in[0,1.5]^N$. Denote the claimed rate by
 \[r(h)=\frac{LD^2}{2(1+2R_0)}+\frac{\sigma^2}{2L} \sum_{k=0}^{N-1}
 \frac{h_k^2}{1+2R_{k+1}}.\]
-\begin{remark}
 Following the framework of Performance Estimation Problems, we first
 reduce~\eqref{eq:PEP} to a finite-dimensional optimization problem over
-first-order information generated along the SGD trajectory. Let
-\[ \mathcal I_N=\{\star,0,\ldots,N\}, \qquad f_i=f(x_i), \qquad g_i=\nabla f(x_i), \qquad g_\star=0. \]
+first-order information generated along the SGD trajectory. Let \[ \mathcal I_N=\{\star,0,\ldots,N\},
+\qquad f_i=f(x_i), \qquad g_i=\nabla f(x_i), \qquad g_\star=0. \]
 By the smooth convex interpolation theorem of
 Taylor, Hendrickx, and Glineur~\cite{taylor2017smooth}, any
 $L$-smooth convex function satisfies, for every $i,j\in\mathcal I_N$,
 \[ f_i-f_j -\langle g_j,x_i-x_j\rangle -\frac{1}{2L}\|g_i-g_j\|^2 \geq 0. \]
-Taking expectations, define the interpolation quantities
-\[ \mathcal Q_{i,j}(F,G) := \mathbb E_\epsilon\!\left[ f_i-f_j -\langle g_j,x_i-x_j\rangle -\frac{1}{2L}\|g_i-g_j\|^2 \right], \qquad i,j\in\mathcal I_N . \]
+Define the interpolation quantities
+\[ \mathcal Q_{i,j}(F,G) := f_i-f_j -\langle g_j,x_i-x_j\rangle -\frac{1}{2L}\|g_i-g_j\|^2,
+\qquad i,j\in\mathcal I_N . \]
 To express these quantities using finitely many variables, following the
 stochastic PEP framework of Rubbens, Colla, and
-Hendrickx~\cite{rubbens2025}, collect the expected function values in
-\[ F= \left( f_\star, \mathbb E_\epsilon[f_0], \ldots, \mathbb E_\epsilon[f_N] \right)^\top \]
+Hendrickx~\cite{rubbens2025}, collect the function values in
+\[ F= \left( f_\star, f_0, \ldots, f_N \right)^\top \]
 and the vectors appearing along the trajectory in
-\[ V=
-\begin{bmatrix}
+\[ V= \begin{bmatrix}
 x_0-x_\star
-&
-g_0
-&
-\cdots
-&
-g_N
-&
-\epsilon_0
-&
-\cdots
-&
-\epsilon_{N-1}
+& g_0 
+& \cdots
+& g_N 
+& \epsilon_0
+& \cdots
+& \epsilon_{N-1}
 \end{bmatrix}. \]
-We define the expected Gram matrix
-\[ G:=\mathbb E_\epsilon[V^\top V]\succeq0. \]
-The SGD recursion gives
-\[ x_j-x_\star = x_0-x_\star -\frac{1}{L}\sum_{t=0}^{j-1} h_t(g_t+\epsilon_t), \qquad j=1,\ldots,N. \]
+We define the Gram matrix
+\[ G:=V^\top V\succeq0. \]
+The SGD recursion gives \[ x_j-x_\star = x_0-x_\star -\frac{1}{L}\sum_{t=0}^{j-1} h_t(g_t+\epsilon_t), \qquad j=1,\ldots,N. \]
 Hence every $x_j-x_\star$ is a linear combination of
 $x_0-x_\star$, previous gradients, and previous noise terms, so no
 additional iterate vectors are needed in the Gram representation.
@@ -1162,31 +1154,24 @@ After substituting these relations, each
 $\mathcal Q_{i,j}(F,G)$ is affine in $F$ and $G$.
 The initial-distance and bounded-variance assumptions similarly give
 the nonnegative quantities
-\[ \mathcal R(F,G) := D^2-\|x_0-x_\star\|^2 \geq0 \]
-and \[ \mathcal S_k(F,G) := \sigma^2-\mathbb E_\epsilon\|\epsilon_k\|^2 \geq0, \qquad k=0,\ldots,N-1. \]
-Moreover, independence and zero mean imply that each noise vector is
-orthogonal in expectation to all information available before it is
-sampled. We encode these relations by
-\[ \mathcal E_{k,\ell}(F,G) := \mathbb E_\epsilon \langle\epsilon_k,\epsilon_\ell\rangle =0, \qquad 0\leq\ell<k\leq N-1, \]
-\[ \mathcal G_{k,j}(F,G) := \mathbb E_\epsilon \langle\epsilon_k,g_j\rangle =0, \qquad 0\leq j\leq k\leq N-1, \]
-and
-\[ \mathcal X_{k,0}(F,G) := \mathbb E_\epsilon
-\langle\epsilon_k,x_0-x_\star\rangle =0, \qquad k=0,\ldots,N-1. \]
+\[ \mathcal D(F,G) := D^2-\|x_0-x_\star\|^2 \geq0 \]
+and \[ \mathcal S_k(F,G) := \sigma^2-\|\epsilon_k\|^2 \geq0, \qquad k=0,\ldots,N-1. \]
+Moreover, following the stochastic PEP relaxation, independence and zero mean are encoded through orthogonality constraints with the history information.
+We write these relations as \[ \mathcal E_{k,\ell}(F,G) := \langle\epsilon_k,\epsilon_\ell\rangle =0, \qquad 0\leq\ell<k\leq N-1, \]
+\[ \mathcal G_{k,j}(F,G) := \langle\epsilon_k,g_j\rangle =0, \qquad 0\leq j\leq k\leq N-1, \]and \[ \mathcal X_{k,0}(F,G) := \langle\epsilon_k,x_0-x_\star\rangle =0, \qquad k=0,\ldots,N-1. \]
 Together with the SGD recursion, these equalities also imply
-$\mathbb E_\epsilon\langle\epsilon_k,x_j-x_\star\rangle=0$
-for every $j\leq k$.
+\[ \langle\epsilon_k,x_j-x_\star\rangle=0 \] for every $j\leq k$.
 Consequently, every admissible problem instance in
 $\mathtt P(L,D,\sigma^2)$ induces a feasible pair $(F,G)$ for the
 following semidefinite relaxation:
 \begin{equation}
 \label{eq:gram-pep}
-p_{\mathrm{gram}}(h,L,D,\sigma^2) =
-\left\{ \begin{aligned}
+p_{\mathrm{gram}}(h,L,D,\sigma^2) = \left\{ \begin{aligned}
 \max_{F,G}\quad
     &(e_{N+2}-e_1)^\top F
 \\
 \mathrm{s.t.}\quad
-    &\mathcal R(F,G)\geq0,
+    &\mathcal D(F,G)\geq0,
 \\
     &\mathcal Q_{i,j}(F,G)\geq0,
         && i,j\in\mathcal I_N,
@@ -1203,15 +1188,13 @@ p_{\mathrm{gram}}(h,L,D,\sigma^2) =
     &\mathcal X_{k,0}(F,G)=0,
         &&k=0,\ldots,N-1,
 \\
-    &G\succeq0.
-\end{aligned} \right.
+    &G\succeq0. \end{aligned} \right.
 \end{equation}
-In particular, \[ \mathtt{PEP}(h,L,D,\sigma^2) \leq p_{\mathrm{gram}}(h,L,D,\sigma^2).\]
+In particular, \[ \mathtt{PEP}(h,L,D,\sigma^2) \leq p_{\mathrm{gram}}(h,L,D,\sigma^2). \]
 Thus it suffices to upper bound this SDP relaxation. We do not require
 the relaxation itself to be exact; the matching construction in
 Section~\ref{sec:LB} will ultimately show that our resulting upper bound
 is tight in the regime of Theorem~\ref{thm:main-rate}.
-\end{remark}
 Our proof constructs explicit multipliers, given in closed form below, such that \begin{equation}\label{eq:certificate-identity}
 \begin{aligned}
 r(h)-(f_N-f_\star) ={}& \tau \mathcal{R}(F,G) +\sum_{k=0}^{N-1}\eta_k \mathcal{S}_k(F,G) +\sum_{i,j\in\mathcal{I}_N}\lambda_{i,j}\mathcal{Q}_{i,j}(F,G) \\
