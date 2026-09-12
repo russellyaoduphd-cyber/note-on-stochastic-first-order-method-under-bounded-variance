@@ -12,39 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Patch main.tex
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('main.tex')
-          text=p.read_text()
-          roadmap=r'''To prove that the Gram multiplier $Z$ is positive semidefinite, we exploit its factorized construction rather than analyze $Z$ entrywise. Since $Z$ is obtained by a congruence transformation of $\widehat W_N$, it suffices to show that $\widehat W_N$ is positive semidefinite. The latter has a simple block-diagonal structure, so the proof reduces to verifying nonnegativity of the scalar blocks $d_j$ and positive semidefiniteness of the leading $2\times2$ block $\Gamma_N$. These two verifications are exactly where the short-step condition $h_k\le3/2$ enters.'''
-          proof=r'''\begin{proposition}
-The Gram multiplier $Z$ is positive semidefinite.
-\end{proposition}
-\begin{proof}
-By the factorization
-\[ Z=(K_NB_N)^\top\widehat W_N(K_NB_N), \]
-it suffices to show that $\widehat W_N\succeq0$. Recall that
-\[ \widehat W_N=\Gamma_N\oplus d_2\oplus\cdots\oplus d_N. \]
-Thus it remains to show that $d_j\ge0$ for $j=2,\ldots,N$ and that $\Gamma_N\succeq0$.
-For $j=2,\ldots,N$, direct simplification gives
-\[ d_j=\frac{h_{j-1}\big[(3-2h_{j-1})R_{j-1}+R_j\big]}{32R_{j-1}^2}. \]
-Since $0<h_{j-1}\le3/2$ and $R_j\ge0$, we have $d_j\ge0$.
-It remains to consider the leading block $\Gamma_N$. Define
-\[ \omega=\begin{pmatrix}1\\ T_0(1-\alpha_0)/2\end{pmatrix}. \]
-Then
-\[ \Gamma_N=\frac{1}{2T_0}\omega\omega^\top+\frac{T_1-T_0(1-\alpha_0)^2}{8}e_2e_2^\top, \]
-where $e_2=(0,1)^\top$. The first term is positive semidefinite. For the second coefficient,
-\[ T_1-T_0(1-\alpha_0)^2=\alpha_0(2-h_0-\alpha_0). \]
-Since $0<\alpha_0\le1/2$ and $h_0\le3/2$, we have
-\[ 2-h_0-\alpha_0\ge0. \]
-Hence $\Gamma_N\succeq0$. Therefore $\widehat W_N\succeq0$, and consequently
-\[ Z=(K_NB_N)^\top\widehat W_N(K_NB_N)\succeq0. \]
-\end{proof}'''
-          old=roadmap+'\n\\subsection{Coefficients Match}'
-          new=roadmap+'\n'+proof+'\n\\subsection{Coefficients Match}'
-          assert text.count(old)==1, text.count(old)
-          p.write_text(text.replace(old,new,1))
-          PY
+          python -c "from pathlib import Path; import base64; p=Path('main.tex'); t=p.read_text(); m='\\\\subsection{Coefficients Match}'; ins=base64.b64decode('XGJlZ2lue3Byb3Bvc2l0aW9ufQpUaGUgR3JhbSBtdWx0aXBsaWVyICRaJCBpcyBwb3NpdGl2ZSBzZW1pZGVmaW5pdGUuClxlbmR7cHJvcG9zaXRpb259ClxiZWdpbntwcm9vZn0KQnkgdGhlIGZhY3Rvcml6YXRpb24KW1wgWj0oS19OQl9OKV5cdG9wXFxoYXRleHQgV19OKEtfTkJfTiksIFxdCml0IHN1ZmZpY2VzIHRvIHNob3cgdGhhdCAkXFxoYXRleHQgV19OXFxzdWNjZXEwJC4gUmVjYWxsIHRoYXQKW1wgXFxoYXRleHQgV19OPSxcR2FtbWFfTlxcb3BsdXMgZF8yXFxvcGx1c1xcY2RvdHNcXG9wbHVzIGRfTi4gXF0KVGh1cyBpdCByZW1haW5zIHRvIHNob3cgdGhhdCAkZF9qXFxnZTAkIGZvciAkaj0yLFxcbGRvdHMsTiQgYW5kIHRoYXQgJFxHYW1tYV9OXFxzdWNjZXEwJC4KRm9yICRqPTIsXFxsZG90cyxOJCwgZGlyZWN0IHNpbXBsaWZpY2F0aW9uIGdpdmVzCltcIGRfaj1cXGZyYWN7aF97ai0xfVxcYmlnWygzLTJoX3tqLTF9KVJfe2otMX0rUl9qXFxiaWddfXszMlJfe2otMX1eMn0uIFxdClNpbmNlICQwPGhfe2otMX1cXGxlMy8yJCBhbmQgJFJfaiBcXGdlMCQsIHdlIGhhdmUgJGRfalxcZ2UwJC4KSXQgcmVtYWlucyB0byBjb25zaWRlciB0aGUgbGVhZGluZyBibG9jayAkXEdhbW1hX04kLiBEZWZpbmUKW1wgXFxvbWVnYT1cXGJlZ2lue3BtYXRyaXh9MVxcXFwgVF8wKDEtXFxhbHBoYV8wKS8yXFxlbmR7cG1hdHJpeH0uIFxdClRoZW4KW1wgXEdhbW1hX049XFxmcmFjezF9ezJUXzB9XFxvbWVnYVxcb21lZ2FeXHRvcCtcXGZyYWN7VF8xLVRfMCgxLVxcYWxwaGFfMCleMn17OH1lXzJlXzJeXHRvcCwgXF0Kd2hlcmUgJGVfMj0oMCwxKV5cdG9wJC4gVGhlIGZpcnN0IHRlcm0gaXMgcG9zaXRpdmUgc2VtaWRlZmluaXRlLiBGb3IgdGhlIHNlY29uZCBjb2VmZmljaWVudCwKW1wgVF8xLVRfMCgxLVxcYWxwaGFfMCleMj1cXGFscGhhXzAoMi1oXzAtXFxhbHBoYV8wKS4gXF0KU2luY2UgJDA8XFxhbHBoYV8wXFxsZTEvMiQgYW5kICRoXzBcXGxlMy8yJCwgd2UgaGF2ZQpbXCAyLWhfMC1cXGFscGhhXzBcXGdlMC4gXF0KSGVuY2UgJFxHYW1tYV9OXFxzdWNjZXEwJC4gVGhlcmVmb3JlICRcXGhhdGV4dCBXX05cXHN1Y2NlcTAkLCBhbmQgY29uc2VxdWVudGx5CltcIFo9KEtfTkJfTik7XFx0b3BcXGhhdGV4dCBXX04oS19OQl9OKVxcc3VjY2VxMC4gXF0KXGVuZHtwcm9vZn0=').decode(); assert t.count(m)==1, t.count(m); p.write_text(t.replace(m, ins+'\\n'+m, 1))"
       - name: Commit change
         run: |
           git config user.name 'github-actions[bot]'
