@@ -1295,23 +1295,23 @@ The Gram multiplier $Z$ is positive semidefinite.
 \end{proposition}
 \begin{proof}
 By the factorization
-[\ Z=(K_NB_N)^\top\\hatext W_N(K_NB_N), \]
-it suffices to show that $\\hatext W_N\\succeq0$. Recall that
-[\ \\hatext W_N=,\Gamma_N\\oplus d_2\\oplus\\cdots\\oplus d_N. \]
-Thus it remains to show that $d_j\\ge0$ for $j=2,\\ldots,N$ and that $\Gamma_N\\succeq0$.
-For $j=2,\\ldots,N$, direct simplification gives
-[\ d_j=\\frac{h_{j-1}\\big[(3-2h_{j-1})R_{j-1}+R_j\\big]}{32R_{j-1}^2}. \]
-Since $0<h_{j-1}\\le3/2$ and $R_j \\ge0$, we have $d_j\\ge0$.
+\[ Z=(K_NB_N)^\top\widehat W_N(K_NB_N), \]
+it suffices to show that $\widehat W_N\succeq0$. Recall that
+\[ \widehat W_N=\Gamma_N\oplus d_2\oplus\cdots\oplus d_N. \]
+Thus it remains to show that $d_j\ge0$ for $j=2,\ldots,N$ and that $\Gamma_N\succeq0$.
+For $j=2,\ldots,N$, direct simplification gives
+\[ d_j=\frac{h_{j-1}\big[(3-2h_{j-1})R_{j-1}+R_j\big]}{32R_{j-1}^2}. \]
+Since $0<h_{j-1}\le3/2$ and $R_j\ge0$, we have $d_j\ge0$.
 It remains to consider the leading block $\Gamma_N$. Define
-[\ \\omega=\\begin{pmatrix}1\\\\ T_0(1-\\alpha_0)/2\\end{pmatrix}. \]
+\[ \omega=\begin{pmatrix}1\\ T_0(1-\alpha_0)/2\end{pmatrix}. \]
 Then
-[\ \Gamma_N=\\frac{1}{2T_0}\\omega\\omega^\top+\\frac{T_1-T_0(1-\\alpha_0)^2}{8}e_2e_2^\top, \]
+\[ \Gamma_N=\frac{1}{2T_0}\omega\omega^\top+\frac{T_1-T_0(1-\alpha_0)^2}{8}e_2e_2^\top, \]
 where $e_2=(0,1)^\top$. The first term is positive semidefinite. For the second coefficient,
-[\ T_1-T_0(1-\\alpha_0)^2=\\alpha_0(2-h_0-\\alpha_0). \]
-Since $0<\\alpha_0\\le1/2$ and $h_0\\le3/2$, we have
-[\ 2-h_0-\\alpha_0\\ge0. \]
-Hence $\Gamma_N\\succeq0$. Therefore $\\hatext W_N\\succeq0$, and consequently
-[\ Z=(K_NB_N);\\top\\hatext W_N(K_NB_N)\\succeq0. \]
+\[ T_1-T_0(1-\alpha_0)^2=\alpha_0(2-h_0-\alpha_0). \]
+Since $0<\alpha_0\le1/2$ and $h_0\le3/2$, we have
+\[ 2-h_0-\alpha_0\ge0. \]
+Hence $\Gamma_N\succeq0$. Therefore $\widehat W_N\succeq0$, and consequently
+\[ Z=(K_NB_N)^\top\widehat W_N(K_NB_N)\succeq0. \]
 \end{proof}
 \subsection{Coefficients Match}
 
