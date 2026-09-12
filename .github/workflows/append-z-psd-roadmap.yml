@@ -1,0 +1,32 @@
+name: Append Z PSD roadmap
+on:
+  push:
+    paths:
+      - '.github/workflows/append-z-psd-roadmap.yml'
+permissions:
+  contents: write
+jobs:
+  edit-main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch main.tex
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('main.tex')
+          text=p.read_text()
+          old=r'''It remains to show $Z\succeq0$.
+\subsection{Coefficients Match}'''
+          new=r'''It remains to show $Z\succeq0$.
+To prove that the Gram multiplier $Z$ is positive semidefinite, we exploit its factorized construction rather than analyze $Z$ entrywise. Since $Z$ is obtained by a congruence transformation of $\widehat W_N$, it suffices to show that $\widehat W_N$ is positive semidefinite. The latter has a simple block-diagonal structure, so the proof reduces to verifying nonnegativity of the scalar blocks $d_j$ and positive semidefiniteness of the leading $2\times2$ block $\Gamma_N$. These two verifications are exactly where the short-step condition $h_k\le3/2$ enters.
+\subsection{Coefficients Match}'''
+          assert text.count(old)==1, text.count(old)
+          p.write_text(text.replace(old,new,1))
+      - name: Commit change
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add main.tex
+          git commit -m 'Add roadmap for PSD proof of Z'
+          git push
