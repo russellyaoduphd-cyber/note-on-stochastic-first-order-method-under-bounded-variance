@@ -1333,6 +1333,37 @@ while the coefficient of $f_N-f_\star$ is $-1$. Therefore the function-value ter
 \subsection{Useful Identities}
 The following identities will be used to verify (3.1) by coefficient matching.
 
+\begin{lemma}\label{lem:lambda-partial-sum}
+For $0\le i<j\le N$,
+\[
+\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j}
+=\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m).
+\]
+\end{lemma}
+\begin{proof}
+By the definitions of the interpolation multipliers,
+\[
+\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j}
+=\alpha_j\prod_{m=0}^{j-1}(1-\alpha_m)
++\alpha_j\sum_{p=0}^{i}\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m).
+\]
+For each $p$,
+\[
+\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m)
+=\prod_{m=p+1}^{j-1}(1-\alpha_m)-\prod_{m=p}^{j-1}(1-\alpha_m).
+\]
+Hence the sum telescopes as
+\[
+\sum_{p=0}^{i}\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m)
+=\prod_{m=i+1}^{j-1}(1-\alpha_m)-\prod_{m=0}^{j-1}(1-\alpha_m).
+\]
+Substituting this above gives
+\[
+\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j}
+=\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m).
+\]
+\end{proof}
+
 \subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
 
 Two or three sentences that invoke the proposition above.
