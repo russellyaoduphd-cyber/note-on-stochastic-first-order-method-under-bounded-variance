@@ -1349,8 +1349,11 @@ By the definitions of the interpolation multipliers,
 \]
 For each $p$, factoring out the common product gives
 \[
-\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m)
-=\prod_{m=p+1}^{j-1}(1-\alpha_m)-\prod_{m=p}^{j-1}(1-\alpha_m).
+\begin{aligned}
+&\prod_{m=p+1}^{j-1}(1-\alpha_m)-\prod_{m=p}^{j-1}(1-\alpha_m)\\
+&=[1-(1-\alpha_p)]\prod_{m=p+1}^{j-1}(1-\alpha_m)
+=\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m).
+\end{aligned}
 \]
 Hence the sum telescopes as
 \[
