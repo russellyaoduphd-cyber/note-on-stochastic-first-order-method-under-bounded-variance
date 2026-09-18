@@ -1378,6 +1378,68 @@ Substituting this above gives
 \end{proof}
 
 
+\begin{lemma}\label{lem:gram-kernel}
+Let $M_N:=K_N^\top\widehat W_NK_N$. Then
+\[
+e_1^\top M_Ne_1=\frac{1}{2T_0},
+\]
+\[
+e_1^\top M_Ne_{q+2}=\frac12\prod_{m=0}^{q}(1-\alpha_m),
+\qquad 0\le q\le N-1,
+\]
+and
+\[
+e_{p+2}^\top M_Ne_{q+2}
+=\frac{T_{p+1}}2\prod_{m=p+1}^{q}(1-\alpha_m),
+\qquad 0\le p\le q\le N-1.
+\]
+\end{lemma}
+\begin{proof}
+Since $K_Ne_1=e_1$, the first identity follows directly from the leading entry of $\widehat W_N$:
+\[
+e_1^\top M_Ne_1=e_1^\top\widehat W_Ne_1=\frac{1}{2T_0}.
+\]
+For the second identity, the definition of $K_N$ gives
+\[
+K_Ne_{q+2}=2\sum_{r=1}^{q+1}\prod_{m=r}^{q}(1-\alpha_m)e_{r+1}.
+\]
+Since $K_Ne_{q+2}$ has no $e_1$ component, only the $(1,2)$ entry of the leading block $\Gamma_N$ contributes. Hence
+\[
+e_1^\top M_Ne_{q+2}
+=\frac{1-\alpha_0}{4}\,2\prod_{m=1}^{q}(1-\alpha_m)
+=\frac12\prod_{m=0}^{q}(1-\alpha_m).
+\]
+For the third identity, using the same expression for the columns of $K_N$ and factoring out the common product gives
+\[
+\begin{aligned}
+e_{p+2}^\top M_Ne_{q+2}
+=4\prod_{m=p+1}^{q}(1-\alpha_m)\Bigg(
+&\frac{T_1}{8}\prod_{m=1}^{p}(1-\alpha_m)^2\\
+&+\sum_{r=2}^{p+1}d_r\prod_{m=r}^{p}(1-\alpha_m)^2
+\Bigg).
+\end{aligned}
+\]
+By the definition
+\[
+d_r=\frac{T_r-T_{r-1}(1-\alpha_{r-1})^2}{8},
+\]
+the expression in parentheses becomes
+\[
+\frac18\left(
+T_1\prod_{m=1}^{p}(1-\alpha_m)^2
++\sum_{r=2}^{p+1}
+\left[T_r\prod_{m=r}^{p}(1-\alpha_m)^2
+-T_{r-1}\prod_{m=r-1}^{p}(1-\alpha_m)^2\right]
+\right).
+\]
+The consecutive terms cancel, leaving $T_{p+1}/8$. Therefore
+\[
+e_{p+2}^\top M_Ne_{q+2}
+=\frac{T_{p+1}}2\prod_{m=p+1}^{q}(1-\alpha_m).
+\]
+\end{proof}
+
+
 
 \subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
 
