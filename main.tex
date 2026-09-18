@@ -194,7 +194,7 @@ The following lemma verifies this construction is indeed feasible for any choice
     \end{align*}
 \end{proof}
 
-\begin{proof}[Proof of Lower Bound Half of Theorem~\ref{thm:main-rate}]
+\subsection{Proof of Lower Bound Half of Theorem~\ref{thm:main-rate}}
     Suppose one has applied SGD to this constructed problem instance. Below, we find that, for any realization of the noise sequence $\epsilon_n$, the claimed expected final iterate suboptimality is attained by the realized suboptimality. In particular, this constant final suboptimality establishes that the expectation over realizations is also exactly the claimed bound.
 
     Consider any sequence of signs $s_{n}\in\{\pm 1\}$ for $n=1,\dots,N$, providing a realization of errors from $P_{n-1}$ of $\epsilon_{n-1} = s_n \sigma e_n$. The key observation here is that the objective $f$ is separable over the coordinate directions $e_0,\dots,e_N$. So the progression of gradient descent in direction $e_i$ only depends on $\langle e_i, x_n\rangle$ (and no other directions). Thus we can analyze each direction separately.
@@ -215,7 +215,6 @@ The following lemma verifies this construction is indeed feasible for any choice
         H_{a_i}(\langle e_i,x_N\rangle) = \frac{\sigma^2}{2L}\frac{h_{i-1}^2}{1+2 R_{i}},
     \end{equation*}
     regardless of the sampled sign $s_i$. Summing over each coordinate $e_0,\dots,e_{N}$ shows the claimed lower bound is attained on every realization of signs.
-\end{proof}
 
 
 
@@ -250,19 +249,23 @@ In particular, we will use (define all values)
 Once we prove these, the claimed rate and so all of our theorems and corollaries from the introduction follow.
 We do this in parts in the following subsections, checking nonnegativeity and then agreement of each coefficient in the claimed affine identity.
 
-\subsection{Useful Intermediate Identities and Lemmas}
 
 \subsection{Proof of Nonnegativity (Proposition~\ref{prop:nonneg-mult})}
 
 \subsection{Proof of Positive Semidefiniteness (Proposition~\ref{prop:psd-mult})}
 
-\subsection{Verification of Constant Terms in Proposition~\ref{prop:identity}}
+
+\subsection{Useful Intermediate Identities and Lemmas}
+
+\subsection{Verification of Main Identity (Proposition~\ref{prop:identity})}
+
+\subsubsection{Verification of Constant Terms in Proposition~\ref{prop:identity}}
 
 
-\subsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
+\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
 
 
-\subsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
+\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
 
 
 
@@ -1207,7 +1210,7 @@ the relaxation itself to be exact; the matching construction in
 Section~\ref{sec:LB} will ultimately show that our resulting upper bound
 is tight in the regime of Theorem~\ref{thm:main-rate}.
 By weak duality, we can formulate the dual problem of (9.1) and obtain the upper bound by solving it.
-Our proof constructs explicit dual multipliers, given in closed form below, such that \begin{equation}\label{eq:certificate-identity}
+Our proof constructs explicit dual multipliers, given in closed form below, such that for all vectors $F$ and symmetric matrices $G$, \begin{equation}\label{eq:certificate-identity}
 \begin{aligned}
 r(h)-(f_N-f_\star) ={}& \tau \mathcal{R}(F,G) +\sum_{k=0}^{N-1}\eta_k \mathcal{S}_k(F,G) +\sum_{i,j\in\mathcal{I}_N}\lambda_{i,j}\mathcal{Q}_{i,j}(F,G) \\
 &+ \sum_{k=0}^{N-1}\xi_k\mathcal{X}_{k,0}(F,G) +
@@ -1290,7 +1293,7 @@ Since $R_k\ge h_k>0$, we have $0<\alpha_k=h_k/(2R_k)\le1/2$ for $k=0,\ldots,N-1$
 It remains to show $Z\succeq0$.
 To prove that the Gram multiplier $Z$ is positive semidefinite, we exploit its factorized construction rather than analyze $Z$ entrywise. Since $Z$ is obtained by a congruence transformation of $\widehat W_N$, it suffices to show that $\widehat W_N$ is positive semidefinite. The latter has a simple block-diagonal structure, so the proof reduces to verifying nonnegativity of the scalar blocks $d_j$ and positive semidefiniteness of the leading $2\times2$ block $\Gamma_N$. Both verifications use the short-step condition $h_k\le3/2$.
 \begin{proposition}
-The Gram multiplier $Z$ is positive semidefinite.
+For $h\in [0,3/2]^N$, the Gram multiplier $Z$ is positive semidefinite.
 \end{proposition}
 \begin{proof}
 By the factorization
@@ -1319,22 +1322,18 @@ The constant terms agree since \[
 \] which follows immediately from the definitions of $\tau$ and $\eta_k$.
 Next, we match the coefficients of the function-value terms in $F$.
 The closed-form multipliers satisfy the telescoping identities
-\[
-\lambda_{\star,j}+\sum_{i=0}^{j-1}\lambda_{i,j}=\alpha_j,\qquad
-\sum_{i=j+1}^{N}\lambda_{j,i}=\alpha_j,\qquad j=0,\ldots,N-1,
-\]
+\[\lambda_{\star,j}+\sum_{i=0}^{j-1}\lambda_{i,j}=\alpha_j,\qquad
+\sum_{i=j+1}^{N}\lambda_{j,i}=\alpha_j,\qquad j=0,\ldots,N-1,\]
 and, using $\alpha_N=1$,
-\[
-\lambda_{\star,N}+\sum_{i=0}^{N-1}\lambda_{i,N}=1.
-\]
+\[\lambda_{\star,N}+\sum_{i=0}^{N-1}\lambda_{i,N}=1.\]
 These identities follow directly by telescoping the products in the definitions of the multipliers.
 Only the interpolation constraints depend on $F$. Hence, for $j=0,\ldots,N-1$, the coefficient of $f_j-f_\star$ is
-\[
-\sum_{i=j+1}^{N}\lambda_{j,i}-\lambda_{\star,j}-\sum_{i=0}^{j-1}\lambda_{i,j}=0,
-\]
+\[\sum_{i=j+1}^{N}\lambda_{j,i}-\lambda_{\star,j}-\sum_{i=0}^{j-1}\lambda_{i,j}=0,\]
 while the coefficient of $f_N-f_\star$ is $-1$. Therefore the function-value terms reduce to $-(f_N-f_\star)$, as required.
 
+\subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
 
+Two or three sentences that invoke the proposition above.
 
 
 
