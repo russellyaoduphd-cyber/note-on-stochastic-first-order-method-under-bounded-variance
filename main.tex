@@ -1388,9 +1388,9 @@ The consecutive terms cancel, leaving $T_{p+1}/8$. Therefore
 \[ e_{p+2}^\top M_Ne_{q+2}
 =\frac{T_{p+1}}2\prod_{m=p+1}^{q}(1-\alpha_m). \]
 \end{proof}
-\section{Prove (3.1) by verifying coefficients match}
-Observe that (3.1) is affine in $F$ and $G$. Hence it suffices to verify that the coefficient of each function-value and Gram-matrix term agrees on the two sides. We use the identities from the previous subsection throughout.
-\subsection{Constant and Function-Value Terms}
+\subsection{Prove (3.1) by verifying coefficients match}
+Observe that (3.1) is affine in $F$ and $G$. Hence it suffices to verify that the coefficient of each function-value and Gram-matrix term agrees on the two sides. 
+\subsubsection{Constant and Function-Value Terms}
 The constant terms agree since
 \[\tau D^2+\sum_{k=0}^{N-1}\eta_k\sigma^2=\frac{D^2}{2T_0}+\frac{\sigma^2}{2}\sum_{k=0}^{N-1}\frac{h_k^2}{T_{k+1}}=r(h),\]
 which follows immediately from the definitions of $\tau$ and $\eta_k$.
@@ -1399,12 +1399,11 @@ Only the interpolation constraints depend on $F$. By Lemmas~\ref{lem:lambda-part
 where the second $\alpha_j$ follows directly from $\lambda_{\star,0}=\alpha_0$ when $j=0$. For $j=N$, Lemma~\ref{lem:lambda-partial-sum} with $i=N-1$ and $\alpha_N=1$ gives
 \[-\lambda_{\star,N}-\sum_{i=0}^{N-1}\lambda_{i,N}=-1.\]
 Therefore the function-value terms reduce to $-(f_N-f_\star)$, as required.
-\subsection{Gram-Matrix Coefficients}
+\subsubsection{Gram-Matrix Coefficients}
 For brevity, write $s=x_0-x_\star$ and let $b_s$, $b_{g_i}$, and $b_{\epsilon_k}$ denote the corresponding columns of $B_N$. From the definition of $B_N$,
 \[b_s=e_1,\qquad b_{g_0}=-T_0e_1+e_2,\qquad b_{g_i}=-e_{i+1}+e_{i+2}\quad(1\le i\le N-1),\]
 \[b_{g_N}=-e_{N+1},\qquad b_{\epsilon_k}=-\frac{h_k}{T_{k+1}}e_{k+2}\quad(0\le k\le N-1).\]
 Recall that $M_N=K_N^\top\widehat W_NK_N$. Since $Z=B_N^\top M_NB_N$, the coefficient of a diagonal Gram term $\|u\|^2$ in $\langle Z,G\rangle$ is $b_u^\top M_Nb_u$, while the coefficient of an off-diagonal term $\langle u,v\rangle$ is $2b_u^\top M_Nb_v$.
-\subsubsection{Terms involving $s$}
 The coefficient of $\|s\|^2$ receives contributions only from $\tau\mathcal R(F,G)$ and $\langle Z,G\rangle$. By Lemma~\ref{lem:gram-kernel},
 \[-\tau+b_s^\top M_Nb_s=-\frac{1}{2T_0}+\frac{1}{2T_0}=0.\]
 Next consider $\langle g_i,s\rangle$. Its interpolation contribution is $\lambda_{\star,i}$, coming from $\lambda_{\star,i}\mathcal Q_{\star,i}$. Using Lemma~\ref{lem:gram-kernel} and the columns of $B_N$ above,
@@ -1420,7 +1419,6 @@ Finally, the terms involving $\langle\epsilon_k,s\rangle$ come from $\xi_k\mathc
 \[2b_s^\top M_Nb_{\epsilon_k}=-\frac{2h_k}{T_{k+1}}e_1^\top M_Ne_{k+2}
 =-\frac{h_k}{T_{k+1}}\prod_{m=0}^{k}(1-\alpha_m)=-\xi_k.\]
 Thus these coefficients also vanish.
-\subsubsection{Noise Terms}
 For $\|\epsilon_k\|^2$, the only contributions are from $\eta_k\mathcal S_k(F,G)$ and $\langle Z,G\rangle$. Lemma~\ref{lem:gram-kernel} gives
 \[b_{\epsilon_k}^\top M_Nb_{\epsilon_k}
 =\frac{h_k^2}{T_{k+1}^2}\frac{T_{k+1}}2
