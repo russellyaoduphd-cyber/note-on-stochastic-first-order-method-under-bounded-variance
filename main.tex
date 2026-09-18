@@ -1342,29 +1342,20 @@ For $0\le i<j\le N$,
 \end{lemma}
 \begin{proof}
 By the definitions of the interpolation multipliers,
-\[
-\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j}
+\[\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j}
 =\alpha_j\prod_{m=0}^{j-1}(1-\alpha_m)
-+\alpha_j\sum_{p=0}^{i}\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m).
-\]
++\alpha_j\sum_{p=0}^{i}\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m).\]
 For each $p$, factoring out the common product gives
-\[
-\begin{aligned}
+\[\begin{aligned}
 &\prod_{m=p+1}^{j-1}(1-\alpha_m)-\prod_{m=p}^{j-1}(1-\alpha_m)\\
 &=[1-(1-\alpha_p)]\prod_{m=p+1}^{j-1}(1-\alpha_m)
 =\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m).
-\end{aligned}
-\]
+\end{aligned} \]
 Hence the sum telescopes as
-\[
-\sum_{p=0}^{i}\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m)
-=\prod_{m=i+1}^{j-1}(1-\alpha_m)-\prod_{m=0}^{j-1}(1-\alpha_m).
-\]
+\[\sum_{p=0}^{i}\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m)
+=\prod_{m=i+1}^{j-1}(1-\alpha_m)-\prod_{m=0}^{j-1}(1-\alpha_m).\]
 Substituting this above gives
-\[
-\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j}
-=\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m).
-\]
+\[\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j} =\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m). \]
 \end{proof}
 
 \subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
