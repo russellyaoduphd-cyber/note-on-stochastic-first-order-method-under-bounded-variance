@@ -1400,34 +1400,36 @@ where the second $\alpha_j$ follows directly from $\lambda_{\star,0}=\alpha_0$ w
 \[-\lambda_{\star,N}-\sum_{i=0}^{N-1}\lambda_{i,N}=-1.\]
 Therefore the function-value terms reduce to $-(f_N-f_\star)$, as required.
 \subsubsection{Gram-Matrix Coefficients}
-For brevity, write $s=x_0-x_\star$ and let $b_s$, $b_{g_i}$, and $b_{\epsilon_k}$ denote the corresponding columns of $B_N$. From the definition of $B_N$,
-\[b_s=e_1,\qquad b_{g_0}=-T_0e_1+e_2,\qquad b_{g_i}=-e_{i+1}+e_{i+2}\quad(1\le i\le N-1),\]
-\[b_{g_N}=-e_{N+1},\qquad b_{\epsilon_k}=-\frac{h_k}{T_{k+1}}e_{k+2}\quad(0\le k\le N-1).\]
-Recall that $M_N=K_N^\top\widehat W_NK_N$. Since $Z=B_N^\top M_NB_N$, the coefficient of a diagonal Gram term $\|u\|^2$ in $\langle Z,G\rangle$ is $b_u^\top M_Nb_u$, while the coefficient of an off-diagonal term $\langle u,v\rangle$ is $2b_u^\top M_Nb_v$.
-The coefficient of $\|s\|^2$ receives contributions only from $\tau\mathcal R(F,G)$ and $\langle Z,G\rangle$. By Lemma~\ref{lem:gram-kernel},
-\[-\tau+b_s^\top M_Nb_s=-\frac{1}{2T_0}+\frac{1}{2T_0}=0.\]
-Next consider $\langle g_i,s\rangle$. Its interpolation contribution is $\lambda_{\star,i}$, coming from $\lambda_{\star,i}\mathcal Q_{\star,i}$. Using Lemma~\ref{lem:gram-kernel} and the columns of $B_N$ above,
-\[2b_s^\top M_Nb_{g_i}=
+We now match the Gram-matrix terms, beginning with those involving $x_0-x_\star$.
+The coefficient of $\|x_0-x_\star\|^2$ receives contributions only from $\tau\mathcal R(F,G)$ and $\langle Z,G\rangle$. The column of $B_N$ corresponding to $x_0-x_\star$ is $e_1$, so Lemma~\ref{lem:gram-kernel} gives
+\[-\tau+e_1^\top M_Ne_1=-\frac{1}{2T_0}+\frac{1}{2T_0}=0.\]
+Next consider $\langle g_i,x_0-x_\star\rangle$. Its interpolation contribution is $\lambda_{\star,i}$, coming from $\lambda_{\star,i}\mathcal Q_{\star,i}$. The columns of $B_N$ corresponding to $g_i$ are
+\[-T_0e_1+e_2\quad(i=0),\qquad -e_{i+1}+e_{i+2}\quad(1\le i\le N-1),\qquad -e_{N+1}\quad(i=N).\]
+Since $\langle g_i,x_0-x_\star\rangle$ is an off-diagonal Gram term, applying Lemma~\ref{lem:gram-kernel} gives the contribution from $\langle Z,G\rangle$ as
+\[
 \begin{cases}
--\alpha_0,&i=0,\\
--\alpha_i\displaystyle\prod_{m=0}^{i-1}(1-\alpha_m),&1\le i\le N-1,\\
--\displaystyle\prod_{m=0}^{N-1}(1-\alpha_m),&i=N,
+2e_1^\top M_N(-T_0e_1+e_2)=-\alpha_0,&i=0,\\
+2e_1^\top M_N(-e_{i+1}+e_{i+2})=-\alpha_i\displaystyle\prod_{m=0}^{i-1}(1-\alpha_m),&1\le i\le N-1,\\
+-2e_1^\top M_Ne_{N+1}=-\displaystyle\prod_{m=0}^{N-1}(1-\alpha_m),&i=N,
 \end{cases}
-=-\lambda_{\star,i}.\]
-Hence the coefficient of $\langle g_i,s\rangle$ is zero for every $i=0,\ldots,N$.
-Finally, the terms involving $\langle\epsilon_k,s\rangle$ come from $\xi_k\mathcal X_{k,0}(F,G)$ and $\langle Z,G\rangle$. By Lemma~\ref{lem:gram-kernel},
-\[2b_s^\top M_Nb_{\epsilon_k}=-\frac{2h_k}{T_{k+1}}e_1^\top M_Ne_{k+2}
-=-\frac{h_k}{T_{k+1}}\prod_{m=0}^{k}(1-\alpha_m)=-\xi_k.\]
-Thus these coefficients also vanish.
-For $\|\epsilon_k\|^2$, the only contributions are from $\eta_k\mathcal S_k(F,G)$ and $\langle Z,G\rangle$. Lemma~\ref{lem:gram-kernel} gives
-\[b_{\epsilon_k}^\top M_Nb_{\epsilon_k}
-=\frac{h_k^2}{T_{k+1}^2}\frac{T_{k+1}}2
-=\frac{h_k^2}{2T_{k+1}}=\eta_k,\]
-so the total coefficient is $-\eta_k+\eta_k=0$.
-For $0\le\ell<k\le N-1$, the terms involving $\langle\epsilon_\ell,\epsilon_k\rangle$ come from $\nu_{\ell,k}\mathcal E_{k,\ell}(F,G)$ and $\langle Z,G\rangle$. Again by Lemma~\ref{lem:gram-kernel},
-\[2b_{\epsilon_\ell}^\top M_Nb_{\epsilon_k}
+\]
+which equals $-\lambda_{\star,i}$ in each case. Hence the coefficient of $\langle g_i,x_0-x_\star\rangle$ is zero for every $i=0,\ldots,N$.
+
+The terms involving $\langle\epsilon_k,x_0-x_\star\rangle$ come from $\xi_k\mathcal X_{k,0}(F,G)$ and $\langle Z,G\rangle$. The column of $B_N$ corresponding to $\epsilon_k$ is $-\frac{h_k}{T_{k+1}}e_{k+2}$. Therefore, by Lemma~\ref{lem:gram-kernel}, the contribution from $\langle Z,G\rangle$ is
+\[-\frac{2h_k}{T_{k+1}}e_1^\top M_Ne_{k+2}
+=-\frac{h_k}{T_{k+1}}\prod_{m=0}^{k}(1-\alpha_m)=-\xi_k,\]
+so these coefficients also vanish.
+
+We next consider the noise-noise terms. For $\|\epsilon_k\|^2$, the only contributions are from $\eta_k\mathcal S_k(F,G)$ and $\langle Z,G\rangle$. Using the same column of $B_N$ and Lemma~\ref{lem:gram-kernel}, the contribution from $\langle Z,G\rangle$ is
+\[\frac{h_k^2}{T_{k+1}^2}e_{k+2}^\top M_Ne_{k+2}
+=\frac{h_k^2}{2T_{k+1}}=\eta_k.\]
+Thus the total coefficient is $-\eta_k+\eta_k=0$.
+For $0\le\ell<k\le N-1$, the terms involving $\langle\epsilon_\ell,\epsilon_k\rangle$ come from $\nu_{\ell,k}\mathcal E_{k,\ell}(F,G)$ and $\langle Z,G\rangle$. Since this is an off-diagonal Gram term, Lemma~\ref{lem:gram-kernel} gives the contribution from $\langle Z,G\rangle$ as
+\[
+\frac{2h_\ell h_k}{T_{\ell+1}T_{k+1}}e_{\ell+2}^\top M_Ne_{k+2}
 =\frac{h_\ell h_k}{T_{k+1}}\prod_{m=\ell+1}^{k}(1-\alpha_m)
-=-\nu_{\ell,k}.\]
+=-\nu_{\ell,k}.
+\]
 Hence the coefficient of every $\langle\epsilon_\ell,\epsilon_k\rangle$ is zero.
 
 \subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
