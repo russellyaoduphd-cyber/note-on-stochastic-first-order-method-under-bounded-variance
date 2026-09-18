@@ -1361,31 +1361,17 @@ Substituting this above gives
 
 \begin{lemma}\label{lem:lambda-outgoing-sum}
 For $0\le i\le N-1$,
-\[
-\sum_{j=i+1}^{N}\lambda_{i,j}=\alpha_i.
-\]
+\[\sum_{j=i+1}^{N}\lambda_{i,j}=\alpha_i.\]
 \end{lemma}
 \begin{proof}
 Using $\alpha_N=1$ and the definitions of the interpolation multipliers,
-\[
-\sum_{j=i+1}^{N}\lambda_{i,j}
-=\alpha_i\left(\sum_{j=i+1}^{N-1}\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)
-+\prod_{m=i+1}^{N-1}(1-\alpha_m)\right).
-\]
-For each $j=i+1,\ldots,N-1$, factoring out the common product as in the previous lemma gives
-\[
-\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)
-=\prod_{m=i+1}^{j-1}(1-\alpha_m)-\prod_{m=i+1}^{j}(1-\alpha_m).
-\]
-Therefore the finite sum telescopes: its first positive product is the empty product, hence one, while all intermediate products cancel. Thus
-\[
-\sum_{j=i+1}^{N-1}\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)
-=1-\prod_{m=i+1}^{N-1}(1-\alpha_m).
-\]
+\[ \sum_{j=i+1}^{N}\lambda_{i,j} =\alpha_i\left(\sum_{j=i+1}^{N-1}\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m) +\prod_{m=i+1}^{N-1}(1-\alpha_m)\right).\]
+For each $j=i+1,\ldots,N-1$, 
+\[\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)
+=\prod_{m=i+1}^{j-1}(1-\alpha_m)-\prod_{m=i+1}^{j}(1-\alpha_m).\]
+Recall that the empty product is defined to be $1$ and use the telescoping sum, \[ \sum_{j=i+1}^{N-1}\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m) =1 \prod_{m=i+1}^{N-1}(1-\alpha_m). \]
 Substituting this above gives
-\[
-\sum_{j=i+1}^{N}\lambda_{i,j}=\alpha_i.
-\]
+\[ \sum_{j=i+1}^{N}\lambda_{i,j}=\alpha_i. \]
 \end{proof}
 
 \subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
