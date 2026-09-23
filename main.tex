@@ -1154,10 +1154,17 @@ Define the interpolation quantities
 \[\mathcal Q_{i,j}(F,G):=(f_i-f_\star)-(f_j-f_\star)-\langle g_j,x_i-x_j\rangle-\frac{1}{2L}\|g_i-g_j\|^2,\qquad i,j\in\mathcal I_N.\]
 To express these quantities using finitely many variables, following the
 stochastic PEP framework of Rubbens, Colla, and
-Hendrickx~\cite{rubbens2025}, collect the function-value gaps in
-\[F=(f_0-f_\star,\ldots,f_N-f_\star)^\top\in\mathbb R^{N+1}.\]
-and the vectors appearing along the trajectory in
-\[ V=
+Hendrickx~\cite{rubbens2025}, we use $F$ and $G$ to denote the
+corresponding expected function-value and Gram variables. In particular,
+collect the expected function-value gaps in
+\[
+F:=\mathbb E_\epsilon
+\left[(f_0-f_\star,\ldots,f_N-f_\star)^\top\right]
+\in\mathbb R^{N+1}.
+\]
+Let
+\[
+V=
 \begin{bmatrix}
 x_0-x_\star
 &
@@ -1172,21 +1179,33 @@ g_N
 \cdots
 &
 \epsilon_{N-1}
-\end{bmatrix}. \]
-We define the Gram matrix
-\[ G:=V^\top V\succeq0. \]
+\end{bmatrix},
+\]
+and define the expected Gram matrix
+\[
+G:=\mathbb E_\epsilon[V^\top V]\succeq0.
+\]
+To keep the notation light, we suppress expectation symbols from this
+point onward: every inner product or squared norm represented in $G$
+is understood in this expected sense. For example,
+$\langle\epsilon_k,g_j\rangle$ denotes the corresponding entry
+$\mathbb E_\epsilon[\langle\epsilon_k,g_j\rangle]$ of $G$.
+
 The SGD recursion gives
-\[ x_j-x_\star = x_0-x_\star -\frac{1}{L}\sum_{t=0}^{j-1} h_t(g_t+\epsilon_t), \qquad j=1,\ldots,N. \]
+\[
+x_j-x_\star=x_0-x_\star-\frac1L\sum_{t=0}^{j-1}
+h_t(g_t+\epsilon_t),\qquad j=1,\ldots,N.
+\]
 Hence every $x_j-x_\star$ is a linear combination of
 $x_0-x_\star$, previous gradients, and previous noise terms, so no
 additional iterate vectors are needed in the Gram representation.
-After substituting these relations, each
+After substituting these relations and taking expectations, each
 $\mathcal Q_{i,j}(F,G)$ is affine in $F$ and $G$.
 The initial-distance and bounded-variance assumptions similarly give
 the nonnegative quantities
 \[ \mathcal R(F,G) := D^2-\|x_0-x_\star\|^2 \geq0 \]
 and \[ \mathcal S_k(F,G) := \sigma^2-\|\epsilon_k\|^2 \geq0, \qquad k=0,\ldots,N-1. \]
-Moreover, following the stochastic PEP relaxation, independence and zero mean are encoded through orthogonality constraints with the history information. We write these relations as
+Moreover, following the stochastic PEP relaxation, the relevant moment consequences of independence and zero mean are encoded through orthogonality constraints with the history information. We write these relations as
 \[ \mathcal E_{k,\ell}(F,G) := \langle\epsilon_k,\epsilon_\ell\rangle =0, \qquad 0\leq\ell<k\leq N-1, \]
 \[ \mathcal G_{k,j}(F,G) := \langle\epsilon_k,g_j\rangle =0, \qquad 0\leq j\leq k\leq N-1, \]
 and
