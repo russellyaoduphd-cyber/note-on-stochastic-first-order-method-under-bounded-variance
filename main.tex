@@ -1441,10 +1441,10 @@ Next consider $\langle g_i,x_0-x_\star\rangle$. The interpolation term $\lambda_
 \[-T_0e_1+e_2\quad(i=0),\qquad -e_{i+1}+e_{i+2}\quad(1\le i\le N-1),\qquad
 -e_{N+1}\quad(i=N). \]
 Using Lemma~\ref{lem:gram-kernel}, the contribution from $\langle Z,G\rangle$ is \[ \begin{cases}
-2e_1^\top M_N(-T_0e_1+e_2)=-\alpha_0,&i=0,\\
-2e_1^\top M_N(-e_{i+1}+e_{i+2})
+2\left[-T_0(M_N)_{1,1}+(M_N)_{1,2}\right]=-\alpha_0,&i=0,\\
+2\left[-(M_N)_{1,i+1}+(M_N)_{1,i+2}\right]
 =-\alpha_i\displaystyle\prod_{m=0}^{i-1}(1-\alpha_m),&1\le i\le N-1,\\
--2e_1^\top M_Ne_{N+1}
+-2(M_N)_{1,N+1}
 =-\displaystyle\prod_{m=0}^{N-1}(1-\alpha_m),&i=N,
 \end{cases} \]
 which equals $-\lambda_{\star,i}$ in each case. Hence the coefficient of $\langle g_i,x_0-x_\star\rangle$ is zero.
