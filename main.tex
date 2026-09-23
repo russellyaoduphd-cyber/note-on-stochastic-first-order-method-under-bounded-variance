@@ -1511,6 +1511,41 @@ T_0^2(M_N)_{1,1}-2T_0(M_N)_{1,2}+(M_N)_{2,2}
 \]
 where we used $T_{i+1}=T_i-2h_i$ and Lemma~\ref{lem:T-alpha}. Hence the coefficient of $\|g_i\|^2$ is zero for every $i=0,\ldots,N$.
 
+\subsubsection{Verification of $\langle g_i,g_j\rangle$ in Proposition~\ref{prop:certificate-identity}}
+Consider $0\le i<j\le N$. From the interpolation constraints, the terms $-\langle g_j,x_p-x_j\rangle$ contribute whenever $p=\star$ or $0\le p\le i$, while the squared-gradient term in $\mathcal Q_{i,j}$ contributes $\lambda_{i,j}$. Hence, by Lemma~\ref{lem:lambda-partial-sum},
+\[
+\begin{aligned}
+&-h_i\left(\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j}\right)+\lambda_{i,j}\\
+&=-(h_i-\alpha_i)\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m).
+\end{aligned}
+\]
+We next compute the contribution from $\langle Z,G\rangle$. For $1\le i<j\le N-1$, Lemma~\ref{lem:gram-kernel} gives
+\[
+\begin{aligned}
+&2(-e_{i+1}+e_{i+2})^\top M_N(-e_{j+1}+e_{j+2})\\
+={}&T_i\prod_{m=i}^{j-1}(1-\alpha_m)-T_i\prod_{m=i}^{j}(1-\alpha_m)
+-T_{i+1}\prod_{m=i+1}^{j-1}(1-\alpha_m)+T_{i+1}\prod_{m=i+1}^{j}(1-\alpha_m)\\
+={}&\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)\left[T_i(1-\alpha_i)-T_{i+1}\right]\\
+={}&(h_i-\alpha_i)\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m),
+\end{aligned}
+\]
+where the last equality follows from Lemma~\ref{lem:T-alpha}. The boundary cases follow from the corresponding columns of $B_N$:
+\[
+\begin{aligned}
+2(-T_0e_1+e_2)^\top M_N(-e_{j+1}+e_{j+2})
+&=(h_0-\alpha_0)\alpha_j\prod_{m=1}^{j-1}(1-\alpha_m), &&1\le j\le N-1,\\
+2(-e_{i+1}+e_{i+2})^\top M_N(-e_{N+1})
+&=(h_i-\alpha_i)\prod_{m=i+1}^{N-1}(1-\alpha_m), &&1\le i\le N-1,\\
+2(-T_0e_1+e_2)^\top M_N(-e_{N+1})
+&=(h_0-\alpha_0)\prod_{m=1}^{N-1}(1-\alpha_m).
+\end{aligned}
+\]
+Using $\alpha_N=1$, these expressions have the same unified form
+\[
+(h_i-\alpha_i)\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m).
+\]
+Thus the interpolation and Gram contributions cancel, and the coefficient of $\langle g_i,g_j\rangle$ is zero for every $0\le i<j\le N$.
+
 \subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
 
 Two or three sentences that invoke the proposition above.
