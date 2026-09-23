@@ -1138,6 +1138,7 @@ Therefore, the coefficient of $\langle \epsilon_i,\epsilon_j\rangle$ on the righ
 }
 
 \section{Section 3 renew}
+\subsection{PEP-Style Convergence Proof}
 Section~\ref{sec:LB} showed that the bound in Theorem~\ref{thm:main-rate} is attained by an explicit worst-case problem instance. We now prove the matching upper bound for every problem instance when $h\in[0,1.5]^N$. Denote the claimed rate by
 \[r(h)=\frac{LD^2}{2(1+2R_0)}+\frac{\sigma^2}{2L} \sum_{k=0}^{N-1}
 \frac{h_k^2}{1+2R_{k+1}}.\]
@@ -1242,7 +1243,7 @@ r(h)-(f_N-f_\star) ={}& \tau \mathcal{R}(F,G) +\sum_{k=0}^{N-1}\eta_k \mathcal{S
 \end{equation}
 The dual multipliers associated with the distance, variance, and interpolation constraints are nonnegative for every feasible problem, while the noise orthogonality terms are equal to zero. Thus, once the multipliers of the inequality constraints are shown to be nonnegative and $Z\succeq0$, identity~(3.1) immediately gives $f_N-f_\star\leq r(h)$.
 The identity in~(3.1) is affine in the function values and Gram matrix entries. We therefore verify it by matching the coefficients on the two sides. We first formulate the corresponding PEP relaxation and specify the multipliers, and then verify their feasibility and the claimed identity.
-\subsection{Closed form of Multipliers}
+
 For the remainder of the proof, we normalize $L=1$; the general result follows by rescaling the objective and stochastic gradients. We first consider $h\in(0,1.5]^N$, with the boundary cases obtained by continuity.
 Recall\[R_k=\sum_{t=k}^{N-1}h_t,\qquad R_N=0,\] and define
 \[ T_k:=1+2R_k, \qquad \alpha_k:=\frac{h_k}{2R_k}, \qquad k=0,\ldots,N-1. \]
@@ -1301,20 +1302,26 @@ and, for $j=2,\ldots,N$,
 \[ d_j := \frac{ T_j-T_{j-1}(1-\alpha_{j-1})^2 }{8}. \]
 The Gram multiplier in \eqref{eq:certificate-identity} is
 \[ Z = (K_NB_N)^\top \widehat W_N (K_NB_N). \]
-These formulas completely specify the certificate in \eqref{eq:certificate-identity}. In the next subsection, we verify that the multipliers associated with inequality constraints are nonnegative
-and that $Z\succeq0$.
-\subsection{Verify Multipliers are non-negative and Prove Positive Semidefiniteness}
-\begin{proposition}
+These formulas completely specify the certificate in \eqref{eq:certificate-identity}. The proof reduces to the following three propositions.
+
+\begin{proposition}\label{prop:nonnegative-multipliers}
 The multipliers associated with the inequality constraints satisfy $\tau\ge0$, $\eta_k\ge0$, $\lambda_{\star,j}\ge0$, and $\lambda_{i,j}\ge0$.
 \end{proposition}
+\begin{proposition}\label{prop:psd-gram-multiplier}
+For $h\in [0,3/2]^N$, the Gram multiplier $Z$ is positive semidefinite.
+\end{proposition}
+\begin{proposition}\label{prop:certificate-identity}
+For any $h\in(0,3/2]^N$, the multipliers defined above satisfy the certificate identity~\eqref{eq:certificate-identity} for every $F\in\mathbb R^{N+1}$ and $G\in \mathbb{S}^{2N+2}$.
+\end{proposition}
+
+\subsection{Proof of Nonnegativity (Proposition~\ref{prop:nonnegative-multipliers})}
 \begin{proof}
 Since $R_k\ge h_k>0$, we have $0<\alpha_k=h_k/(2R_k)\le1/2$ for $k=0,\ldots,N-1$. Hence every factor in the nonzero interpolation multipliers is nonnegative, so all $\lambda_{\star,j}$ and $\lambda_{i,j}$ are nonnegative; the nonnegativity of $\tau$ and $\eta_k$ is immediate from their definitions.
 \end{proof}
+
+\subsection{Proof of Positive Semidefiniteness (Proposition~\ref{prop:psd-gram-multiplier})}
 It remains to show $Z\succeq0$.
 To prove that the Gram multiplier $Z$ is positive semidefinite, we exploit its factorized construction rather than analyze $Z$ entrywise. Since $Z$ is obtained by a congruence transformation of $\widehat W_N$, it suffices to show that $\widehat W_N$ is positive semidefinite. The latter has a simple block-diagonal structure, so the proof reduces to verifying nonnegativity of the scalar blocks $d_j$ and positive semidefiniteness of the leading $2\times2$ block $\Gamma_N$. Both verifications use the short-step condition $h_k\le3/2$.
-\begin{proposition}
-For $h\in [0,3/2]^N$, the Gram multiplier $Z$ is positive semidefinite.
-\end{proposition}
 \begin{proof}
 By the factorization
 \[ Z=(K_NB_N)^\top\widehat W_N(K_NB_N), \]
@@ -1335,7 +1342,8 @@ Since $0<\alpha_0\le1/2$ and $h_0\le3/2$, we have
 Hence $\Gamma_N\succeq0$. Therefore $\widehat W_N\succeq0$, and consequently
 \[ Z=(K_NB_N)^\top\widehat W_N(K_NB_N)\succeq0. \]
 \end{proof}
-\subsection{Useful Identities}
+
+\subsection{Useful Intermediate Identities and Lemmas}
 The following identities will be used to verify (3.1) by coefficient matching.
 
 \begin{lemma}\label{lem:lambda-partial-sum}
@@ -1385,11 +1393,11 @@ Substituting this above gives
 
 \begin{lemma}\label{lem:gram-kernel}
 Let $M_N:=K_N^\top\widehat W_NK_N$. Then
-\[e_1^\top M_Ne_1=\frac{1}{2T_0},\]
-\[e_1^\top M_Ne_{q+2}=\frac12\prod_{m=0}^{q}(1-\alpha_m),
+\[(M_N)_{1,1}=\frac{1}{2T_0},\]
+\[(M_N)_{1,q+2}=\frac12\prod_{m=0}^{q}(1-\alpha_m),
 \qquad 0\le q\le N-1,\]
 and
-\[e_{p+2}^\top M_Ne_{q+2}
+\[(M_N)_{p+2,q+2}
 =\frac{T_{p+1}}2\prod_{m=p+1}^{q}(1-\alpha_m),\qquad 0\le p\le q\le N-1.\]
 \end{lemma}
 \begin{proof}
@@ -1397,23 +1405,20 @@ Since $K_Ne_1=e_1$, the first identity follows directly from the leading entry o
 For the second identity, the definition of $K_N$ gives
 \[K_Ne_{q+2}=2\sum_{r=1}^{q+1}\prod_{m=r}^{q}(1-\alpha_m)e_{r+1}. \]
 Since $K_Ne_{q+2}$ has no $e_1$ component, only the $(1,2)$ entry of the leading block $\Gamma_N$ contributes. Hence
-\[e_1^\top M_Ne_{q+2} =\frac{1-\alpha_0}{4}\,2\prod_{m=1}^{q}(1-\alpha_m)
+\[(M_N)_{1,q+2}=\frac{1-\alpha_0}{4}\,2\prod_{m=1}^{q}(1-\alpha_m)
 =\frac12\prod_{m=0}^{q}(1-\alpha_m). \]
 For the third identity, using the same expression for the columns of $K_N$ and factoring out the common product gives
-\[\begin{aligned} e_{p+2}^\top M_Ne_{q+2} =4\prod_{m=p+1}^{q}(1-\alpha_m)\Bigg( &\frac{T_1}{8}\prod_{m=1}^{p}(1-\alpha_m)^2 +\sum_{r=2}^{p+1}d_r\prod_{m=r}^{p}(1-\alpha_m)^2 \Bigg). \end{aligned} \]
+\[\begin{aligned} (M_N)_{p+2,q+2}=4\prod_{m=p+1}^{q}(1-\alpha_m)\Bigg( &\frac{T_1}{8}\prod_{m=1}^{p}(1-\alpha_m)^2 +\sum_{r=2}^{p+1}d_r\prod_{m=r}^{p}(1-\alpha_m)^2 \Bigg). \end{aligned} \]
 By the definition of $d_r$, the expression in parentheses becomes
 \[\frac18\left( T_1\prod_{m=1}^{p}(1-\alpha_m)^2 +\sum_{r=2}^{p+1}
 \left[T_r\prod_{m=r}^{p}(1-\alpha_m)^2 -T_{r-1}\prod_{m=r-1}^{p}(1-\alpha_m)^2\right] \right). \]
 The consecutive terms cancel, leaving $T_{p+1}/8$. Therefore
-\[ e_{p+2}^\top M_Ne_{q+2}
+\[(M_N)_{p+2,q+2}
 =\frac{T_{p+1}}2\prod_{m=p+1}^{q}(1-\alpha_m). \]
 \end{proof}
-\subsection{Prove (3.1) by verifying coefficients match}
-\begin{proposition}\label{prop:certificate-identity}
-For any $h\in(0,3/2]^N$, the multipliers defined above satisfy the certificate identity~\eqref{eq:certificate-identity} for every $F\in\mathbb R^{N+1}$ and $G\in \mathbb{S}^{2N+2}$.
-\end{proposition}
-Observe that (3.1) is affine in $F$ and $G$. We therefore prove Proposition~\ref{prop:certificate-identity} by matching the coefficients on the two sides: it suffices to verify agreement of the constant and function-value terms, together with the coefficients of all squared-norm and inner-product terms represented in $G$. 
-\subsection{Proof of Proposition \ref{prop:certificate-identity} }
+
+\subsection{Verification of Main Identity (Proposition~\ref{prop:certificate-identity})}
+Observe that (3.1) is affine in $F$ and $G$. We therefore prove Proposition~\ref{prop:certificate-identity} by matching the coefficients on the two sides: it suffices to verify agreement of the constant and function-value terms, together with the coefficients of all squared-norm and inner-product terms represented in $G$.
 \subsubsection{Verification of Constant Terms in Proposition~\ref{prop:certificate-identity}}
 By the definitions of $\tau$ and $\eta_k$, the constant terms match immediately.
 \subsubsection{Verification of Function-Value Terms in Proposition~\ref{prop:certificate-identity}}
@@ -1431,9 +1436,7 @@ Thus the coefficient of $f_N-f_\star$ is $-1$, and the function-value terms redu
 \subsubsection{Verification of $\|x_0-x_\star\|^2$ in Proposition~\ref{prop:certificate-identity}}
 We next consider the coefficient of $\|x_0-x_\star\|^2$. It receives contributions from $\tau\mathcal R(F,G)$ and $\langle Z,G\rangle$. Since the column of $B_N$ corresponding to $x_0-x_\star$ is $e_1$, Lemma~\ref{lem:gram-kernel} gives
 \[-\tau+e_1^\top M_Ne_1=-\frac{1}{2T_0}+\frac{1}{2T_0}=0.\]
-\subsubsection{terms involving initial distance}
-Next consider $\langle g_i,x_0-x_\star\rangle$. Its interpolation contribution is $\lambda_{\star,i}$, coming from $\lambda_{\star,i}\mathcal Q_{\star,i}$. The columns of $B_N$ corresponding to $g_i$ are
-\[-T_0e_1+e_2\quad(i=0),\qquad -e_{i+1}+e_{i+2}\quad(1\le i\le N-1),\qquad -e_{N+1}\quad(i=N).\]
+\subsubsection{Verification of $\langle g_i,x_0-x_\star\rangle$ in Proposition~\ref{prop:certificate-identity}}
 Next consider $\langle g_i,x_0-x_\star\rangle$. The interpolation term $\lambda_{\star,i}\mathcal Q_{\star,i}$ contributes $\lambda_{\star,i}$, while the remaining contribution comes from $\langle Z,G\rangle$. The columns of $B_N$ corresponding to $g_i$ are
 \[-T_0e_1+e_2\quad(i=0),\qquad -e_{i+1}+e_{i+2}\quad(1\le i\le N-1),\qquad
 -e_{N+1}\quad(i=N). \]
@@ -1445,20 +1448,24 @@ Using Lemma~\ref{lem:gram-kernel}, the contribution from $\langle Z,G\rangle$ is
 =-\displaystyle\prod_{m=0}^{N-1}(1-\alpha_m),&i=N,
 \end{cases} \]
 which equals $-\lambda_{\star,i}$ in each case. Hence the coefficient of $\langle g_i,x_0-x_\star\rangle$ is zero.
+\subsubsection{Verification of $\langle\epsilon_k,x_0-x_\star\rangle$ in Proposition~\ref{prop:certificate-identity}}
 We next consider $\langle\epsilon_k,x_0-x_\star\rangle$. Its coefficient receives contributions from $\xi_k\mathcal X_{k,0}(F,G)$ and $\langle Z,G\rangle$. The column of $B_N$ corresponding to $\epsilon_k$ is
 \[ -\frac{h_k}{T_{k+1}}e_{k+2}. \]
 Therefore, by Lemma~\ref{lem:gram-kernel}, the contribution from $\langle Z,G\rangle$ is
 \[-\frac{2h_k}{T_{k+1}}e_1^\top M_Ne_{k+2} =-\frac{h_k}{T_{k+1}}\prod_{m=0}^{k}(1-\alpha_m) =-\xi_k.\]
 Hence the coefficient of $\langle\epsilon_k,x_0-x_\star\rangle$ is zero.
+\subsubsection{Verification of $\|\epsilon_k\|^2$ in Proposition~\ref{prop:certificate-identity}}
 For $\|\epsilon_k\|^2$, the two contributions come from $\eta_k\mathcal S_k(F,G)$ and $\langle Z,G\rangle$. Using the same column of $B_N$ and Lemma~\ref{lem:gram-kernel},
 \[ \frac{h_k^2}{T_{k+1}^2}e_{k+2}^\top M_Ne_{k+2} =\frac{h_k^2}{2T_{k+1}}
 =\eta_k. \]
 Thus the coefficient of $\|\epsilon_k\|^2$ is
 \[ -\eta_k+\eta_k=0. \]
+\subsubsection{Verification of $\langle\epsilon_\ell,\epsilon_k\rangle$ in Proposition~\ref{prop:certificate-identity}}
 Finally, for $0\le\ell<k\le N-1$, the coefficient of $\langle\epsilon_\ell,\epsilon_k\rangle$ receives contributions from $\nu_{\ell,k}\mathcal E_{k,\ell}(F,G)$ and $\langle Z,G\rangle$. By Lemma~\ref{lem:gram-kernel},
 \[ \frac{2h_\ell h_k}{T_{\ell+1}T_{k+1}} e_{\ell+2}^\top M_Ne_{k+2}
 = \frac{h_\ell h_k}{T_{k+1}} \prod_{m=\ell+1}^{k}(1-\alpha_m) =-\nu_{\ell,k}. \]
 Hence the coefficient of $\langle\epsilon_\ell,\epsilon_k\rangle$ is zero.
+
 \subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
 
 Two or three sentences that invoke the proposition above.
@@ -1472,4 +1479,3 @@ Two or three sentences that invoke the proposition above.
 
 
 \end{document}
-
