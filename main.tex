@@ -1546,6 +1546,50 @@ Using $\alpha_N=1$, these expressions have the same unified form
 \]
 Thus the interpolation and Gram contributions cancel, and the coefficient of $\langle g_i,g_j\rangle$ is zero for every $0\le i<j\le N$.
 
+\subsubsection{Verification of $\langle g_i,\epsilon_k\rangle$ in Proposition~\ref{prop:certificate-identity}}
+It remains to consider $\langle g_i,\epsilon_k\rangle$, where $0\le i\le N$ and $0\le k\le N-1$. We distinguish whether $g_i$ belongs to the history available at time $k$.
+
+First suppose $0\le i\le k$. The interpolation constraints do not contribute, since $x_p-x_i$ only involves noise terms $\epsilon_0,\ldots,\epsilon_{i-1}$. The equality constraint $\mathcal G_{k,i}(F,G)=0$ contributes $\mu_{i,k}$. For $i=0$, Lemmas~\ref{lem:gram-kernel} and~\ref{lem:T-alpha} give the contribution from $\langle Z,G\rangle$ as
+\[
+\begin{aligned}
+-\frac{2h_k}{T_{k+1}}\left[-T_0(M_N)_{1,k+2}+(M_N)_{2,k+2}\right]
+&=\frac{h_k}{T_{k+1}}\left[T_0(1-\alpha_0)-T_1\right]\prod_{m=1}^{k}(1-\alpha_m)\\
+&=\frac{h_k}{T_{k+1}}(h_0-\alpha_0)\prod_{m=1}^{k}(1-\alpha_m)
+=-\mu_{0,k}.
+\end{aligned}
+\]
+For $1\le i\le k$,
+\[
+\begin{aligned}
+-\frac{2h_k}{T_{k+1}}\left[-(M_N)_{i+1,k+2}+(M_N)_{i+2,k+2}\right]
+&=\frac{h_k}{T_{k+1}}\left[T_i(1-\alpha_i)-T_{i+1}\right]\prod_{m=i+1}^{k}(1-\alpha_m)\\
+&=\frac{h_k}{T_{k+1}}(h_i-\alpha_i)\prod_{m=i+1}^{k}(1-\alpha_m)
+=-\mu_{i,k}.
+\end{aligned}
+\]
+Hence the coefficient of $\langle g_i,\epsilon_k\rangle$ is zero whenever $i\le k$.
+
+Now suppose $0\le k<i\le N$. There is no constraint $\mathcal G_{k,i}$ in this case. By Lemma~\ref{lem:lambda-partial-sum}, the interpolation contribution is
+\[
+-h_k\left(\lambda_{\star,i}+\sum_{p=0}^{k}\lambda_{p,i}\right)
+=-h_k\alpha_i\prod_{m=k+1}^{i-1}(1-\alpha_m).
+\]
+For $k<i\le N-1$, Lemma~\ref{lem:gram-kernel} gives the Gram contribution
+\[
+\begin{aligned}
+-\frac{2h_k}{T_{k+1}}\left[-(M_N)_{k+2,i+1}+(M_N)_{k+2,i+2}\right]
+=h_k\alpha_i\prod_{m=k+1}^{i-1}(1-\alpha_m).
+\end{aligned}
+\]
+For $i=N$,
+\[
+\frac{2h_k}{T_{k+1}}(M_N)_{k+2,N+1}
+=h_k\prod_{m=k+1}^{N-1}(1-\alpha_m),
+\]
+which has the same form since $\alpha_N=1$. Thus the interpolation and Gram contributions also cancel when $i>k$.
+
+All constant, function-value, squared-norm, and inner-product coefficients in~\eqref{eq:certificate-identity} have now been verified. Therefore Proposition~\ref{prop:certificate-identity} follows.
+
 \subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
 
 Two or three sentences that invoke the proposition above.
