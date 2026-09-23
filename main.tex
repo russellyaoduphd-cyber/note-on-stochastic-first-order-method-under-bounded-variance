@@ -1591,8 +1591,7 @@ which has the same form since $\alpha_N=1$. Thus the interpolation and Gram cont
 All constant, function-value, squared-norm, and inner-product coefficients in~\eqref{eq:certificate-identity} have now been verified. Therefore Proposition~\ref{prop:certificate-identity} follows.
 
 \subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
-
-Two or three sentences that invoke the proposition above.
+For $h\in(0,3/2]^N$ and $L=1$, Propositions~\ref{prop:nonnegative-multipliers}, \ref{prop:psd-gram-multiplier}, and~\ref{prop:certificate-identity} imply that the right-hand side of~\eqref{eq:certificate-identity} is nonnegative at every feasible point of~\eqref{eq:gram-pep}: the equality-constraint terms vanish, the remaining scalar terms are nonnegative, and $\langle Z,G\rangle\ge0$. Hence $p_{\mathrm{gram}}(h,1,D,\sigma^2)\le r(h)$, and together with $\mathtt{PEP}(h,1,D,\sigma^2)\le p_{\mathrm{gram}}(h,1,D,\sigma^2)$ this proves the claimed upper bound for positive stepsizes. The boundary cases $h\in[0,3/2]^N$ follow by continuity, and rescaling the objective and stochastic gradients gives the result for general $L>0$.
 
 
 
