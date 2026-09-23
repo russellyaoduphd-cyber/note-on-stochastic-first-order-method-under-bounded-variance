@@ -1242,7 +1242,7 @@ r(h)-(f_N-f_\star) ={}& \tau \mathcal{R}(F,G) +\sum_{k=0}^{N-1}\eta_k \mathcal{S
 \tag{3.1}
 \end{equation}
 The dual multipliers associated with the distance, variance, and interpolation constraints are nonnegative for every feasible problem, while the noise orthogonality terms are equal to zero. Thus, once the multipliers of the inequality constraints are shown to be nonnegative and $Z\succeq0$, identity~(3.1) immediately gives $f_N-f_\star\leq r(h)$.
-The identity in~(3.1) is affine in the function values and Gram matrix entries. We therefore verify it by matching the coefficients on the two sides. We first formulate the corresponding PEP relaxation and specify the multipliers, and then verify their feasibility and the claimed identity.
+The identity in~(3.1) is affine in the function values and Gram matrix entries. We therefore verify it by matching the coefficients on the two sides. We next specify the multipliers, and then verify their feasibility and the claimed identity.
 
 For the remainder of the proof, we normalize $L=1$; the general result follows by rescaling the objective and stochastic gradients. We first consider $h\in(0,1.5]^N$, with the boundary cases obtained by continuity.
 Recall\[R_k=\sum_{t=k}^{N-1}h_t,\qquad R_N=0,\] and define
@@ -1320,9 +1320,9 @@ Since $R_k\ge h_k>0$, we have $0<\alpha_k=h_k/(2R_k)\le1/2$ for $k=0,\ldots,N-1$
 \end{proof}
 
 \subsection{Proof of Positive Semidefiniteness (Proposition~\ref{prop:psd-gram-multiplier})}
+\begin{proof}
 It remains to show $Z\succeq0$.
 To prove that the Gram multiplier $Z$ is positive semidefinite, we exploit its factorized construction rather than analyze $Z$ entrywise. Since $Z$ is obtained by a congruence transformation of $\widehat W_N$, it suffices to show that $\widehat W_N$ is positive semidefinite. The latter has a simple block-diagonal structure, so the proof reduces to verifying nonnegativity of the scalar blocks $d_j$ and positive semidefiniteness of the leading $2\times2$ block $\Gamma_N$. Both verifications use the short-step condition $h_k\le3/2$.
-\begin{proof}
 By the factorization
 \[ Z=(K_NB_N)^\top\widehat W_N(K_NB_N), \]
 it suffices to show that $\widehat W_N\succeq0$. Recall that
