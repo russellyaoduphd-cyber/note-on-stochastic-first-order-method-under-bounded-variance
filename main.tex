@@ -1417,6 +1417,30 @@ The consecutive terms cancel, leaving $T_{p+1}/8$. Therefore
 =\frac{T_{p+1}}2\prod_{m=p+1}^{q}(1-\alpha_m). \]
 \end{proof}
 
+\begin{lemma}\label{lem:T-alpha}
+For $k=0,\ldots,N-1$,
+\[
+T_k\alpha_k=h_k+\alpha_k,
+\qquad
+T_k(1-\alpha_k)-T_{k+1}=h_k-\alpha_k.
+\]
+\end{lemma}
+\begin{proof}
+By the definitions of $T_k$ and $\alpha_k$,
+\[
+T_k\alpha_k=(1+2R_k)\frac{h_k}{2R_k}=h_k+\alpha_k.
+\]
+Moreover, since $R_{k+1}=R_k-h_k$, we have $T_{k+1}=T_k-2h_k$. Therefore,
+\[
+\begin{aligned}
+T_k(1-\alpha_k)-T_{k+1}
+&=T_k-T_k\alpha_k-(T_k-2h_k)\\
+&=2h_k-(h_k+\alpha_k)
+=h_k-\alpha_k.
+\end{aligned}
+\]
+\end{proof}
+
 \subsection{Verification of Main Identity (Proposition~\ref{prop:certificate-identity})}
 Observe that (3.1) is affine in $F$ and $G$. We therefore prove Proposition~\ref{prop:certificate-identity} by matching the coefficients on the two sides: it suffices to verify agreement of the constant and function-value terms, together with the coefficients of all squared-norm and inner-product terms represented in $G$.
 \subsubsection{Verification of Constant Terms in Proposition~\ref{prop:certificate-identity}}
