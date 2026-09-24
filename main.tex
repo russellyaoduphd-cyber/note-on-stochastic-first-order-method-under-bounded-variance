@@ -218,75 +218,442 @@ The following lemma verifies this construction is indeed feasible for any choice
 
 
 
-\section{Proof of Exact Convergence Guarantee for any $h\in [0,1.5]^N$} \label{sec:UB}
-
-Some text introducing main ideas
-
+\section{Proof of Exact Convergence Guarantee for any $h\in (0,1.5]^N$} \label{sec:UB}
 \subsection{PEP-Style Convergence Proof}
-
-The following are nonnegative or equal to zero for any problem \dots
-
-This gives the primal PEP problem of\dots
-
-If we find nonneg/psd multipliers such that the identity \dots holds, then we will have proven our target rate.
-
-So our proof reduces to finding these.
-
-In particular, we will use (define all values)
-
-\begin{proposition}\label{prop:nonneg-mult}
-    The scalars are nonnegative
+Section~\ref{sec:LB} showed that the bound in Theorem~\ref{thm:main-rate} is attained by an explicit worst-case problem instance. We now prove the matching upper bound for every problem instance when $h\in[0,1.5]^N$. Denote the claimed rate by
+\[r(h)=\frac{LD^2}{2(1+2R_0)}+\frac{\sigma^2}{2L} \sum_{k=0}^{N-1}
+\frac{h_k^2}{1+2R_{k+1}}.\]
+Following the framework of Performance Estimation Problems, we first
+reduce~\eqref{eq:PEP} to a finite-dimensional optimization problem over
+first-order information generated along the SGD trajectory. Let
+\[ \mathcal I_N=\{\star,0,\ldots,N\}, \qquad f_i=f(x_i), \qquad g_i=\nabla f(x_i), \qquad g_\star=0. \]
+By the smooth convex interpolation theorem of
+Taylor, Hendrickx, and Glineur~\cite{taylor2017smooth}, any
+$L$-smooth convex function satisfies, for every $i,j\in\mathcal I_N$,
+\[ f_i-f_j -\langle g_j,x_i-x_j\rangle -\frac{1}{2L}\|g_i-g_j\|^2 \geq 0. \]
+Define the interpolation quantities
+\[\mathcal Q_{i,j}(F,G):=(f_i-f_\star)-(f_j-f_\star)-\langle g_j,x_i-x_j\rangle-\frac{1}{2L}\|g_i-g_j\|^2,\qquad i,j\in\mathcal I_N.\]
+To express these quantities using finitely many variables, following the
+stochastic PEP framework of Rubbens, Colla, and
+Hendrickx~\cite{rubbens2025}, we use $F$ and $G$ to denote the
+corresponding expected function-value and Gram variables. In particular,
+collect the expected function-value gaps in
+\[F:=\mathbb E_\epsilon
+\left[(f_0-f_\star,\ldots,f_N-f_\star)^\top\right]
+\in\mathbb R^{N+1}.\]
+Let
+\[V=
+\begin{bmatrix}
+x_0-x_\star
+&
+g_0
+&
+\cdots
+&
+g_N
+&
+\epsilon_0
+&
+\cdots
+&
+\epsilon_{N-1}
+\end{bmatrix},\]
+and define the expected Gram matrix
+\[G:=\mathbb E_\epsilon[V^\top V]\succeq0.\]
+To keep the notation light, we suppress expectation symbols from this
+point onward: each function-value gap represented in $F$, and every
+inner product or squared norm represented in $G$, is understood in this
+expected sense. In particular, $\mathcal Q_{i,j}(F,G)$ denotes the
+expectation of the interpolation quantity above. For example,
+$\langle\epsilon_k,g_j\rangle$ denotes the corresponding entry
+$\mathbb E_\epsilon[\langle\epsilon_k,g_j\rangle]$ of $G$.
+The SGD recursion gives \[x_j-x_\star=x_0-x_\star-\frac1L\sum_{t=0}^{j-1}
+h_t(g_t+\epsilon_t),\qquad j=1,\ldots,N. \]
+Hence every $x_j-x_\star$ is a linear combination of
+$x_0-x_\star$, previous gradients, and previous noise terms, so no
+additional iterate vectors are needed in the Gram representation.
+After substituting these relations and taking expectations, each
+$\mathcal Q_{i,j}(F,G)$ is affine in $F$ and $G$.
+The initial-distance and bounded-variance assumptions similarly give
+the nonnegative quantities \[ \mathcal R(F,G) := D^2-\|x_0-x_\star\|^2 \geq0 \] and \[ \mathcal S_k(F,G) := \sigma^2-\|\epsilon_k\|^2 \geq0, \qquad k=0,\ldots,N-1. \]
+Moreover, following the stochastic PEP relaxation, the relevant moment consequences of independence and zero mean are encoded through orthogonality constraints with the history information. We write these relations as
+\[ \mathcal E_{k,\ell}(F,G) := \langle\epsilon_k,\epsilon_\ell\rangle =0, \qquad 0\leq\ell<k\leq N-1, \]
+\[ \mathcal G_{k,j}(F,G) := \langle\epsilon_k,g_j\rangle =0, \qquad 0\leq j\leq k\leq N-1, \]
+and \[ \mathcal X_{k,0}(F,G) := \langle\epsilon_k,x_0-x_\star\rangle =0, \qquad k=0,\ldots,N-1. \]
+Together with the SGD recursion, these equalities also imply
+$\langle\epsilon_k,x_j-x_\star\rangle=0$
+for every $j\leq k$.
+Consequently, every admissible problem instance in
+$\mathtt P(L,D,\sigma^2)$ induces a feasible pair $(F,G)$ for the
+following semidefinite relaxation:
+\begin{equation}
+\label{eq:gram-pep}
+p_{\mathrm{gram}}(h,L,D,\sigma^2) =
+\left\{ \begin{aligned}
+\max_{F,G}\quad
+    &e_{N+1}^\top F
+\\
+\mathrm{s.t.}\quad
+    &\mathcal R(F,G)\geq0,
+\\
+    &\mathcal Q_{i,j}(F,G)\geq0,
+        && i,j\in\mathcal I_N,
+\\
+    &\mathcal S_k(F,G)\geq0,
+        && k=0,\ldots,N-1,
+\\
+    &\mathcal E_{k,\ell}(F,G)=0,
+        &&0\leq\ell<k\leq N-1,
+\\
+    &\mathcal G_{k,j}(F,G)=0,
+        &&0\leq j\leq k\leq N-1,
+\\
+    &\mathcal X_{k,0}(F,G)=0,
+        &&k=0,\ldots,N-1,
+\\
+    &G\succeq0.
+\end{aligned} \right.
+\end{equation}
+In particular, \[ \mathtt{PEP}(h,L,D,\sigma^2) \leq p_{\mathrm{gram}}(h,L,D,\sigma^2).\]
+Thus it suffices to upper bound this SDP relaxation. We do not require
+the relaxation itself to be exact; the matching construction in
+Section~\ref{sec:LB} will ultimately show that our resulting upper bound
+is tight in the regime of Theorem~\ref{thm:main-rate}.
+By weak duality, we can formulate the dual problem of (9.1) and obtain the upper bound by solving it.
+Our proof constructs explicit dual multipliers, given in closed form below, such that for all vectors $F$ and symmetric matrices $G$, \begin{equation}\label{eq:certificate-identity}
+\begin{aligned}
+r(h)-(f_N-f_\star) ={}& \tau \mathcal{R}(F,G) +\sum_{k=0}^{N-1}\eta_k \mathcal{S}_k(F,G) +\sum_{i,j\in\mathcal{I}_N}\lambda_{i,j}\mathcal{Q}_{i,j}(F,G) \\
+&+ \sum_{k=0}^{N-1}\xi_k\mathcal{X}_{k,0}(F,G) +
+\sum_{k=0}^{N-1}\sum_{j=0}^{k} \mu_{j,k}\mathcal{G}_{k,j}(F,G) \\
+&+ \sum_{k=0}^{N-1}\sum_{\ell=0}^{k-1} \nu_{\ell,k}\mathcal{E}_{k,\ell}(F,G)
++ \langle Z,G\rangle .
+\end{aligned}
+\tag{3.1}
+\end{equation}
+The dual multipliers associated with the distance, variance, and interpolation constraints are nonnegative for every feasible problem, while the noise orthogonality terms are equal to zero. Thus, once the multipliers of the inequality constraints are shown to be nonnegative and $Z\succeq0$, identity~(3.1) immediately gives $f_N-f_\star\leq r(h)$.
+The identity in~(3.1) is affine in the function values and Gram matrix entries. We therefore verify it by matching the coefficients on the two sides. We next specify the multipliers, and then verify their feasibility and the claimed identity.
+For the remainder of the proof, we normalize $L=1$; the general result follows by rescaling the objective and stochastic gradients. We first consider $h\in(0,1.5]^N$, with the boundary cases obtained by continuity.
+Recall\[R_k=\sum_{t=k}^{N-1}h_t,\qquad R_N=0,\] and define
+\[ T_k:=1+2R_k, \qquad \alpha_k:=\frac{h_k}{2R_k}, \qquad k=0,\ldots,N-1. \]
+For convenience, we additionally set
+\[ T_N=1, \qquad \alpha_N:=1, \]
+and interpret an empty product as one.
+We now give the closed-form multipliers used in
+\eqref{eq:certificate-identity}. The nonzero interpolation multipliers
+are \[ \lambda_{\star,j} = \alpha_j \prod_{m=0}^{j-1}(1-\alpha_m), \qquad
+j=0,\ldots,N, \]
+and \[ \lambda_{i,j} = \alpha_i\alpha_j \prod_{m=i+1}^{j-1}(1-\alpha_m),
+\qquad 0\leq i<j\leq N. \]
+All remaining interpolation multipliers are set to zero.
+The multiplier associated with the initial distance constraint is
+\[ \tau=\frac{1}{2T_0}, \]
+and the multipliers associated with the variance constraints are
+\[ \eta_k=\frac{h_k^2}{2T_{k+1}}, \qquad k=0,\ldots,N-1. \]
+For the affine orthogonality constraints, define
+\[ \xi_k = \frac{h_k}{T_{k+1}} \prod_{m=0}^{k}(1-\alpha_m),
+\qquad k=0,\ldots,N-1, \]
+\[ \mu_{j,k} = - \frac{h_k}{T_{k+1}} (h_j-\alpha_j) \prod_{m=j+1}^{k}(1-\alpha_m), \qquad 0\leq j\leq k\leq N-1, \]
+and \[ \nu_{\ell,k} = - \frac{h_\ell h_k}{T_{k+1}} \prod_{m=\ell+1}^{k}(1-\alpha_m), \qquad 0\leq\ell<k\leq N-1. \]
+It remains to define the positive semidefinite multiplier $Z$. Let
+\[H_N = \operatorname{Diag} \left( \frac{h_0}{T_1}, \frac{h_1}{T_2},
+\ldots, \frac{h_{N-1}}{T_N} \right) \]
+and let \[ \Delta_N =
+\begin{pmatrix}
+1&-1&0&\cdots&0\\
+0&1&-1&\ddots&\vdots\\
+\vdots&\ddots&\ddots&\ddots&0\\
+0&\cdots&0&1&-1
+\end{pmatrix}
+\in\mathbb R^{N\times(N+1)}. \]
+Define \[ B_N =
+\begin{pmatrix}
+1 & -T_0 e_1^\top & 0_{1\times N}\\
+0_{N\times1} & \Delta_N & -H_N
+\end{pmatrix}, \]
+where $e_1$ denotes the first standard basis vector of
+$\mathbb R^{N+1}$.
+Next, define $K_N\in\mathbb R^{(N+1)\times(N+1)}$ by
+\[ (K_N)_{jk} = \begin{cases} 1, &j=k=0, \\[0.4em]
+\displaystyle 2\prod_{m=j}^{k-1}(1-\alpha_m),
+&1\leq j\leq k\leq N, \\[0.6em] 0,
+&\text{otherwise}. \end{cases} \]
+Finally, let
+\[\widehat W_N = \Gamma_N\oplus d_2\oplus\cdots\oplus d_N, \]
+where
+\[ \Gamma_N = \begin{pmatrix} \displaystyle\frac{1}{2T_0} & \displaystyle\frac{1-\alpha_0}{4} \\[0.7em]
+\displaystyle\frac{1-\alpha_0}{4}
+& \displaystyle\frac{T_1}{8}
+\end{pmatrix} \]
+and, for $j=2,\ldots,N$,
+\[ d_j := \frac{ T_j-T_{j-1}(1-\alpha_{j-1})^2 }{8}. \]
+The Gram multiplier in \eqref{eq:certificate-identity} is
+\[ Z = (K_NB_N)^\top \widehat W_N (K_NB_N). \]
+These formulas completely specify the certificate in \eqref{eq:certificate-identity}. The proof reduces to the following three propositions.
+\begin{proposition}\label{prop:nonnegative-multipliers}
+The multipliers associated with the inequality constraints satisfy $\tau\ge0$, $\eta_k\ge0$, $\lambda_{\star,j}\ge0$, and $\lambda_{i,j}\ge0$.
 \end{proposition}
-
-\begin{proposition}\label{prop:psd-mult}
-    The matrix is psd
+\begin{proposition}\label{prop:psd-gram-multiplier}
+For $h\in (0,3/2]^N$, the Gram multiplier $Z$ is positive semidefinite.
 \end{proposition}
-
-\begin{proposition}\label{prop:identity}
-    The identity holds
+\begin{proposition}\label{prop:certificate-identity}
+For any $h\in(0,3/2]^N$, the multipliers defined above satisfy the certificate identity~\eqref{eq:certificate-identity} for every $F\in\mathbb R^{N+1}$ and $G\in \mathbb{S}^{2N+2}$.
 \end{proposition}
-
-Once we prove these, the claimed rate and so all of our theorems and corollaries from the introduction follow.
-We do this in parts in the following subsections, checking nonnegativeity and then agreement of each coefficient in the claimed affine identity.
-
-
-\subsection{Proof of Nonnegativity (Proposition~\ref{prop:nonneg-mult})}
-
-\subsection{Proof of Positive Semidefiniteness (Proposition~\ref{prop:psd-mult})}
-
-
+\subsection{Proof of Nonnegativity (Proposition~\ref{prop:nonnegative-multipliers})}
+\begin{proof}
+Since $R_k\ge h_k>0$, we have $0<\alpha_k=h_k/(2R_k)\le1/2$ for $k=0,\ldots,N-1$. Hence every factor in the nonzero interpolation multipliers is nonnegative, so all $\lambda_{\star,j}$ and $\lambda_{i,j}$ are nonnegative; the nonnegativity of $\tau$ and $\eta_k$ is immediate from their definitions.
+\end{proof}
+\subsection{Proof of Positive Semidefiniteness (Proposition~\ref{prop:psd-gram-multiplier})}
+\begin{proof}
+Using the factorization
+\[Z=(K_NB_N)^\top\widehat W_N(K_NB_N),\]
+it is enough to prove that $\widehat W_N\succeq0$. Since
+\[\widehat W_N=\Gamma_N\oplus d_2\oplus\cdots\oplus d_N,\]
+this reduces to showing that $d_j\ge0$ for $j=2,\ldots,N$ and
+$\Gamma_N\succeq0$.
+For $j=2,\ldots,N$, direct simplification gives
+\[d_j= \frac{h_{j-1}\big[(3-2h_{j-1})R_{j-1}+R_j\big]} {32R_{j-1}^2}. \]
+Since $0<h_{j-1}\le3/2$ and $R_j\ge0$, we have $d_j\ge0$.
+For the leading block, define
+\[ \omega=
+\begin{pmatrix} 1
+\\ T_0(1-\alpha_0)/2 
+\end{pmatrix}. \]
+Then
+\[ \Gamma_N =
+\frac{1}{2T_0}\omega\omega^\top + \frac{T_1-T_0(1-\alpha_0)^2}{8}e_2e_2^\top, \]
+where $e_2=(0,1)^\top$.
+The first term is positive semidefinite, while
+\[ T_1-T_0(1-\alpha_0)^2 = \alpha_0(2-h_0-\alpha_0). \]
+Since $0<\alpha_0\le1/2$ and $h_0\le3/2$,
+\[ 2-h_0-\alpha_0\ge0. \]
+Hence $\Gamma_N\succeq0$, and therefore $\widehat W_N\succeq0$.
+Consequently,
+\[ Z=(K_NB_N)^\top\widehat W_N(K_NB_N)\succeq0. \]
+\end{proof}
 \subsection{Useful Intermediate Identities and Lemmas}
+The following identities will be used to verify (3.1) by coefficient matching.
+\begin{lemma}\label{lem:lambda-partial-sum}
+For $0\le i<j\le N$,
+\[ \lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j} =\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m). \]
+\end{lemma}
+\begin{proof}
+By the definitions of the interpolation multipliers,
+\[\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j}
+=\alpha_j\prod_{m=0}^{j-1}(1-\alpha_m)
++\alpha_j\sum_{p=0}^{i}\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m).\]
+For each $p$, factoring out the common product gives
+\[\begin{aligned}
+&\prod_{m=p+1}^{j-1}(1-\alpha_m)-\prod_{m=p}^{j-1}(1-\alpha_m)\\
+&=[1-(1-\alpha_p)]\prod_{m=p+1}^{j-1}(1-\alpha_m)
+=\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m).
+\end{aligned} \]
+Hence the sum telescopes as
+\[\sum_{p=0}^{i}\alpha_p\prod_{m=p+1}^{j-1}(1-\alpha_m)
+=\prod_{m=i+1}^{j-1}(1-\alpha_m)-\prod_{m=0}^{j-1}(1-\alpha_m).\]
+Substituting this above gives
+\[\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j} =\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m). \]
+\end{proof}
+\begin{lemma}\label{lem:lambda-outgoing-sum}
+For $0\le i\le N-1$,
+\[\sum_{j=i+1}^{N}\lambda_{i,j}=\alpha_i.\]
+\end{lemma}
+\begin{proof}
+By the definitions of the interpolation multipliers and $\alpha_N=1$,
+\[ \sum_{j=i+1}^{N}\lambda_{i,j}
+=\alpha_i\left(\sum_{j=i+1}^{N-1}\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)
++\prod_{m=i+1}^{N-1}(1-\alpha_m)\right). \]
+For each $j=i+1,\ldots,N-1$,
+\[ \alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)
+=\prod_{m=i+1}^{j-1}(1-\alpha_m)-\prod_{m=i+1}^{j}(1-\alpha_m). \]
+Recall that the empty product is defined to be $1$. Using the telescoping sum, \[ \sum_{j=i+1}^{N-1}\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)
+=1-\prod_{m=i+1}^{N-1}(1-\alpha_m). \]
+Substituting this above gives
+\[ \sum_{j=i+1}^{N}\lambda_{i,j}=\alpha_i. \]
+\end{proof}
+\begin{lemma}\label{lem:gram-kernel}
+Let $M_N:=K_N^\top\widehat W_NK_N$. Then
+\[(M_N)_{1,1}=\frac{1}{2T_0},\]
+\[(M_N)_{1,q+2}=\frac12\prod_{m=0}^{q}(1-\alpha_m), \qquad 0\le q\le N-1,\]
+and
+\[(M_N)_{p+2,q+2} =\frac{T_{p+1}}2\prod_{m=p+1}^{q}(1-\alpha_m),\qquad 0\le p\le q\le N-1.\]
+\end{lemma}
+\begin{proof}
+Since $K_Ne_1=e_1$, the first identity follows directly from the leading entry of $\widehat W_N$.
+For the second identity, the definition of $K_N$ gives
+\[K_Ne_{q+2}=2\sum_{r=1}^{q+1}\prod_{m=r}^{q}(1-\alpha_m)e_{r+1}. \]
+Since $K_Ne_{q+2}$ has no $e_1$ component, only the $(1,2)$ entry of the leading block $\Gamma_N$ contributes. Hence
+\[(M_N)_{1,q+2}=\frac{1-\alpha_0}{4}\,2\prod_{m=1}^{q}(1-\alpha_m)
+=\frac12\prod_{m=0}^{q}(1-\alpha_m). \]
+For the third identity, using the same expression for the columns of $K_N$ and factoring out the common product gives
+\[\begin{aligned} (M_N)_{p+2,q+2}=4\prod_{m=p+1}^{q}(1-\alpha_m)\Bigg( &\frac{T_1}{8}\prod_{m=1}^{p}(1-\alpha_m)^2 +\sum_{r=2}^{p+1}d_r\prod_{m=r}^{p}(1-\alpha_m)^2 \Bigg). \end{aligned} \]
+By the definition of $d_r$, the expression in parentheses becomes
+\[\frac18\left( T_1\prod_{m=1}^{p}(1-\alpha_m)^2 +\sum_{r=2}^{p+1}
+\left[T_r\prod_{m=r}^{p}(1-\alpha_m)^2 -T_{r-1}\prod_{m=r-1}^{p}(1-\alpha_m)^2\right] \right). \]
+The consecutive terms cancel, leaving $T_{p+1}/8$. Therefore
+\[(M_N)_{p+2,q+2}
+=\frac{T_{p+1}}2\prod_{m=p+1}^{q}(1-\alpha_m). \]
+\end{proof}
+\begin{lemma}\label{lem:T-alpha}
+For $k=0,\ldots,N-1$,
+\[ T_k\alpha_k=h_k+\alpha_k, \qquad T_k(1-\alpha_k)-T_{k+1}=h_k-\alpha_k.
+\]
+\end{lemma}
+\begin{proof}
+By the definitions of $T_k$ and $\alpha_k$,
+\[ T_k\alpha_k=(1+2R_k)\frac{h_k}{2R_k}=h_k+\alpha_k. \]
+Moreover, since $R_{k+1}=R_k-h_k$, we have $T_{k+1}=T_k-2h_k$. Therefore,
+\[ \begin{aligned}
+T_k(1-\alpha_k)-T_{k+1}
+&=T_k-T_k\alpha_k-(T_k-2h_k)\\
+&=2h_k-(h_k+\alpha_k)
+=h_k-\alpha_k.
+\end{aligned} \]
+\end{proof}
 
-\subsection{Verification of Main Identity (Proposition~\ref{prop:identity})}
+\subsection{Verification of Main Identity (Proposition~\ref{prop:certificate-identity})}
+Observe that (3.1) is affine in $F$ and $G$. We therefore prove Proposition~\ref{prop:certificate-identity} by matching the coefficients on the two sides: it suffices to verify agreement of the constant and function-value terms, together with the coefficients of all squared-norm and inner-product terms represented in $G$.
+\subsubsection{Verification of Constant Terms in Proposition~\ref{prop:certificate-identity}}
+The constant terms agree, since their correspondence amounts to
+\[\tau D^2+\sum_{k=0}^{N-1}\eta_k\sigma^2= \frac{D^2}{2T_0}
++\frac{\sigma^2}{2}\sum_{k=0}^{N-1}\frac{h_k^2}{T_{k+1}}, \]
+which follows immediately from
+\[ \tau=\frac{1}{2T_0}, \qquad \eta_k=\frac{h_k^2}{2T_{k+1}}. \]
+\subsubsection{Verification of Function-Value Terms in Proposition~\ref{prop:certificate-identity}}
+Only the interpolation constraints depend on $F$. For $j=0,\ldots,N-1$, the coefficient of $f_j-f_\star$ is
+\[\sum_{i=j+1}^{N}\lambda_{j,i}-\lambda_{\star,j}-\sum_{i=0}^{j-1}\lambda_{i,j}.\]
+For $j\ge1$, Lemma~\ref{lem:lambda-partial-sum} with $i=j-1$ gives
+\[\lambda_{\star,j}+\sum_{i=0}^{j-1}\lambda_{i,j}=\alpha_j.\]
+For $j=0$, the same equality follows directly from $\lambda_{\star,0}=\alpha_0$. By Lemma~\ref{lem:lambda-outgoing-sum},
+\[ \sum_{i=j+1}^{N}\lambda_{j,i}=\alpha_j.\]
+Hence the coefficient of $f_j-f_\star$ is zero for every $j=0,\ldots,N-1$.
+For $j=N$, Lemma~\ref{lem:lambda-partial-sum} with $i=N-1$, together with $\alpha_N=1$, gives
+\[\lambda_{\star,N}+\sum_{i=0}^{N-1}\lambda_{i,N}=1.\]
+Thus the coefficient of $f_N-f_\star$ is $-1$, and the function-value terms reduce to
+\[-(f_N-f_\star),\] as required.
+\subsubsection{Verification of $\|x_0-x_\star\|^2$ in Proposition~\ref{prop:certificate-identity}}
+We next consider the coefficient of $\|x_0-x_\star\|^2$. It receives contributions from $\tau\mathcal R(F,G)$ and $\langle Z,G\rangle$. Since the column of $B_N$ corresponding to $x_0-x_\star$ is $e_1$, Lemma~\ref{lem:gram-kernel} gives
+\[-\tau+(M_N)_{1,1}=-\frac{1}{2T_0}+\frac{1}{2T_0}=0.\]
+\subsubsection{Verification of $\langle g_i,x_0-x_\star\rangle$ in Proposition~\ref{prop:certificate-identity}}
+Next consider $\langle g_i,x_0-x_\star\rangle$. The interpolation term $\lambda_{\star,i}\mathcal Q_{\star,i}$ contributes $\lambda_{\star,i}$, while the remaining contribution comes from $\langle Z,G\rangle$. The columns of $B_N$ corresponding to $g_i$ are
+\[-T_0e_1+e_2\quad(i=0),\qquad -e_{i+1}+e_{i+2}\quad(1\le i\le N-1),\qquad
+-e_{N+1}\quad(i=N). \]
+Using Lemma~\ref{lem:gram-kernel}, the contribution from $\langle Z,G\rangle$ is \[ \begin{cases}
+2\left[-T_0(M_N)_{1,1}+(M_N)_{1,2}\right]=-\alpha_0,&i=0,\\
+2\left[-(M_N)_{1,i+1}+(M_N)_{1,i+2}\right]
+=-\alpha_i\displaystyle\prod_{m=0}^{i-1}(1-\alpha_m),&1\le i\le N-1,\\
+-2(M_N)_{1,N+1}
+=-\displaystyle\prod_{m=0}^{N-1}(1-\alpha_m),&i=N,
+\end{cases} \]
+which equals $-\lambda_{\star,i}$ in each case. Hence the coefficient of $\langle g_i,x_0-x_\star\rangle$ is zero.
+\subsubsection{Verification of $\langle\epsilon_k,x_0-x_\star\rangle$ in Proposition~\ref{prop:certificate-identity}}
+We next consider $\langle\epsilon_k,x_0-x_\star\rangle$. Its coefficient receives contributions from $\xi_k\mathcal X_{k,0}(F,G)$ and $\langle Z,G\rangle$. The column of $B_N$ corresponding to $\epsilon_k$ is
+\[ -\frac{h_k}{T_{k+1}}e_{k+2}. \]
+Therefore, by Lemma~\ref{lem:gram-kernel}, the contribution from $\langle Z,G\rangle$ is
+\[-\frac{2h_k}{T_{k+1}}(M_N)_{1,k+2} =-\frac{h_k}{T_{k+1}}\prod_{m=0}^{k}(1-\alpha_m) =-\xi_k.\]
+Hence the coefficient of $\langle\epsilon_k,x_0-x_\star\rangle$ is zero.
+\subsubsection{Verification of $\|\epsilon_k\|^2$ in Proposition~\ref{prop:certificate-identity}}
+For $\|\epsilon_k\|^2$, the two contributions come from $\eta_k\mathcal S_k(F,G)$ and $\langle Z,G\rangle$. Using the same column of $B_N$ and Lemma~\ref{lem:gram-kernel},
+\[ \frac{h_k^2}{T_{k+1}^2}(M_N)_{k+2,k+2} =\frac{h_k^2}{2T_{k+1}}
+=\eta_k. \]
+Thus the coefficient of $\|\epsilon_k\|^2$ is
+\[ -\eta_k+\eta_k=0. \]
+\subsubsection{Verification of $\langle\epsilon_\ell,\epsilon_k\rangle$ in Proposition~\ref{prop:certificate-identity}}
+Finally, for $0\le\ell<k\le N-1$, the coefficient of $\langle\epsilon_\ell,\epsilon_k\rangle$ receives contributions from $\nu_{\ell,k}\mathcal E_{k,\ell}(F,G)$ and $\langle Z,G\rangle$. By Lemma~\ref{lem:gram-kernel},
+\[ \frac{2h_\ell h_k}{T_{\ell+1}T_{k+1}} (M_N)_{\ell+2,k+2}
+= \frac{h_\ell h_k}{T_{k+1}} \prod_{m=\ell+1}^{k}(1-\alpha_m) =-\nu_{\ell,k}. \]
+Hence the coefficient of $\langle\epsilon_\ell,\epsilon_k\rangle$ is zero.
 
-\subsubsection{Verification of Constant Terms in Proposition~\ref{prop:identity}}
+\subsubsection{Verification of $\|g_i\|^2$ in Proposition~\ref{prop:certificate-identity}}
+We next consider the coefficient of $\|g_i\|^2$. For $0\le i\le N-1$, the interpolation terms contribute
+\[
+-\frac12\left(\lambda_{\star,i}+\sum_{p=0}^{i-1}\lambda_{p,i}+\sum_{j=i+1}^{N}\lambda_{i,j}\right)=-\alpha_i,
+\]
+where Lemmas~\ref{lem:lambda-partial-sum} and~\ref{lem:lambda-outgoing-sum} are used, with the case $i=0$ following directly from $\lambda_{\star,0}=\alpha_0$. For $i=N$, Lemma~\ref{lem:lambda-partial-sum} with $i=N-1$ and $\alpha_N=1$ gives
+\[
+-\frac12\left(\lambda_{\star,N}+\sum_{p=0}^{N-1}\lambda_{p,N}\right)=-\frac12.
+\]
+It remains to compute the contribution from $\langle Z,G\rangle$. Using the columns of $B_N$ corresponding to $g_i$ and Lemma~\ref{lem:gram-kernel}, this contribution is
+\[
+\begin{cases}
+T_0^2(M_N)_{1,1}-2T_0(M_N)_{1,2}+(M_N)_{2,2}
+=-h_0+T_0\alpha_0=\alpha_0,&i=0,\\[0.4em]
+(M_N)_{i+1,i+1}-2(M_N)_{i+1,i+2}+(M_N)_{i+2,i+2}
+=-h_i+T_i\alpha_i=\alpha_i,&1\le i\le N-1,\\[0.4em]
+(M_N)_{N+1,N+1}=\dfrac12,&i=N,
+\end{cases}\]
+where we used $T_{i+1}=T_i-2h_i$ and Lemma~\ref{lem:T-alpha}. Hence the coefficient of $\|g_i\|^2$ is zero for every $i=0,\ldots,N$.
+\subsubsection{Verification of $\langle g_i,g_j\rangle$ in Proposition~\ref{prop:certificate-identity}}
+Consider $0\le i<j\le N$. From the interpolation constraints, the terms $-\langle g_j,x_p-x_j\rangle$ contribute whenever $p=\star$ or $0\le p\le i$, while the squared-gradient term in $\mathcal Q_{i,j}$ contributes $\lambda_{i,j}$. Hence, by Lemma~\ref{lem:lambda-partial-sum},
+\[\begin{aligned}
+&-h_i\left(\lambda_{\star,j}+\sum_{p=0}^{i}\lambda_{p,j}\right)+\lambda_{i,j}\\
+&=-(h_i-\alpha_i)\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m).
+\end{aligned}\]
+We next compute the contribution from $\langle Z,G\rangle$. For $1\le i<j\le N-1$, Lemma~\ref{lem:gram-kernel} gives
+\[ \begin{aligned}
+&2(-e_{i+1}+e_{i+2})^\top M_N(-e_{j+1}+e_{j+2})\\
+={}&T_i\prod_{m=i}^{j-1}(1-\alpha_m)-T_i\prod_{m=i}^{j}(1-\alpha_m)
+-T_{i+1}\prod_{m=i+1}^{j-1}(1-\alpha_m)+T_{i+1}\prod_{m=i+1}^{j}(1-\alpha_m)\\
+={}&\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m)\left[T_i(1-\alpha_i)-T_{i+1}\right]\\
+={}&(h_i-\alpha_i)\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m),
+\end{aligned} \]
+where the last equality follows from Lemma~\ref{lem:T-alpha}. The boundary cases follow from the corresponding columns of $B_N$:
+\[ \begin{aligned}
+2(-T_0e_1+e_2)^\top M_N(-e_{j+1}+e_{j+2})
+&=(h_0-\alpha_0)\alpha_j\prod_{m=1}^{j-1}(1-\alpha_m), &&1\le j\le N-1,\\
+2(-e_{i+1}+e_{i+2})^\top M_N(-e_{N+1})
+&=(h_i-\alpha_i)\prod_{m=i+1}^{N-1}(1-\alpha_m), &&1\le i\le N-1,\\
+2(-T_0e_1+e_2)^\top M_N(-e_{N+1})
+&=(h_0-\alpha_0)\prod_{m=1}^{N-1}(1-\alpha_m).
+\end{aligned} \]
+Using $\alpha_N=1$, these expressions have the same unified form
+\[ (h_i-\alpha_i)\alpha_j\prod_{m=i+1}^{j-1}(1-\alpha_m). \]
+Thus the interpolation and Gram contributions cancel, and the coefficient of $\langle g_i,g_j\rangle$ is zero for every $0\le i<j\le N$.
+\subsubsection{Verification of $\langle g_i,\epsilon_k\rangle$ in Proposition~\ref{prop:certificate-identity}}
+It remains to consider $\langle g_i,\epsilon_k\rangle$, where $0\le i\le N$ and $0\le k\le N-1$. We distinguish whether $g_i$ belongs to the history available at time $k$.
 
+First suppose $0\le i\le k$. The interpolation constraints do not contribute, since $x_p-x_i$ only involves noise terms $\epsilon_0,\ldots,\epsilon_{i-1}$. The equality constraint $\mathcal G_{k,i}(F,G)=0$ contributes $\mu_{i,k}$. For $i=0$, Lemmas~\ref{lem:gram-kernel} and~\ref{lem:T-alpha} give the contribution from $\langle Z,G\rangle$ as
+\[ \begin{aligned}
+-\frac{2h_k}{T_{k+1}}\left[-T_0(M_N)_{1,k+2}+(M_N)_{2,k+2}\right]
+&=\frac{h_k}{T_{k+1}}\left[T_0(1-\alpha_0)-T_1\right]\prod_{m=1}^{k}(1-\alpha_m)\\
+&=\frac{h_k}{T_{k+1}}(h_0-\alpha_0)\prod_{m=1}^{k}(1-\alpha_m)
+=-\mu_{0,k}.
+\end{aligned} \]
+For $1\le i\le k$,
+\[ \begin{aligned}
+-\frac{2h_k}{T_{k+1}}\left[-(M_N)_{i+1,k+2}+(M_N)_{i+2,k+2}\right]
+&=\frac{h_k}{T_{k+1}}\left[T_i(1-\alpha_i)-T_{i+1}\right]\prod_{m=i+1}^{k}(1-\alpha_m)\\
+&=\frac{h_k}{T_{k+1}}(h_i-\alpha_i)\prod_{m=i+1}^{k}(1-\alpha_m)
+=-\mu_{i,k}.
+\end{aligned} \]
+Hence the coefficient of $\langle g_i,\epsilon_k\rangle$ is zero whenever $i\le k$.
+Now suppose $0\le k<i\le N$. There is no constraint $\mathcal G_{k,i}$ in this case. By Lemma~\ref{lem:lambda-partial-sum}, the interpolation contribution is
+\[ -h_k\left(\lambda_{\star,i}+\sum_{p=0}^{k}\lambda_{p,i}\right)
+=-h_k\alpha_i\prod_{m=k+1}^{i-1}(1-\alpha_m). \]
+For $k<i\le N-1$, Lemma~\ref{lem:gram-kernel} gives the Gram contribution
+\[ \begin{aligned}
+-\frac{2h_k}{T_{k+1}}\left[-(M_N)_{k+2,i+1}+(M_N)_{k+2,i+2}\right]
+=h_k\alpha_i\prod_{m=k+1}^{i-1}(1-\alpha_m).
+\end{aligned} \]
+For $i=N$,
+\[ \frac{2h_k}{T_{k+1}}(M_N)_{k+2,N+1}
+=h_k\prod_{m=k+1}^{N-1}(1-\alpha_m), \]
+which has the same form since $\alpha_N=1$. Thus the interpolation and Gram contributions also cancel when $i>k$.
+All constant, function-value, squared-norm, and inner-product coefficients in~\eqref{eq:certificate-identity} have now been verified. Therefore Proposition~\ref{prop:certificate-identity} follows.
+\subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
+For $h\in(0,\frac{3}{2}]^N$ and $L=1$, Propositions~8.1 and~8.2 imply that
+the right-hand side of~(3.1) is nonnegative at every feasible point
+of~(8.1): the equality-constraint terms equal to 0, the inequality-constraint terms are nonnegative, and $\langle Z,G\rangle\ge0$.
+By Proposition~8.3,
+\[r(h)-(f_N-f_\star)\]
+is equal to this right-hand side, and hence
+\[f_N-f_\star\le r(h)\]
+at every feasible point. Therefore,
+\[p_{\mathrm{gram}}(h,1,D,\sigma^2)\le r(h).\]
+Together with
+\[\mathtt{PEP}(h,1,D,\sigma^2) \le p_{\mathrm{gram}}(h,1,D,\sigma^2), \]
+this proves the claimed upper bound for positive stepsizes.
+The boundary cases $h\in(0,\frac{3}{2}]^N$ follow by continuity, and rescaling gives the result for general $L>0$.
 
-\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
-
-
-
-\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
-
-\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
-
-
-\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
-
-\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
-
-
-\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
-
-\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
-
-
-\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
-
-\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
-
-
-\subsubsection{Verification of \dots Terms in Proposition~\ref{prop:identity}}
 
 
 \section{Conclusion}
@@ -1570,7 +1937,19 @@ For $i=N$,
 which has the same form since $\alpha_N=1$. Thus the interpolation and Gram contributions also cancel when $i>k$.
 All constant, function-value, squared-norm, and inner-product coefficients in~\eqref{eq:certificate-identity} have now been verified. Therefore Proposition~\ref{prop:certificate-identity} follows.
 \subsection{Proof of Upper Bound Half of Theorem~\ref{thm:main-rate}}
-For $h\in(0,3/2]^N$ and $L=1$, Propositions~\ref{prop:nonnegative-multipliers},~\ref{prop:psd-gram-multiplier}, and~\ref{prop:certificate-identity} imply that the right-hand side of~\eqref{eq:certificate-identity} is nonnegative at every feasible point of~\eqref{eq:gram-pep}: the equality-constraint terms vanish, the inequality-constraint terms are nonnegative, and $\langle Z,G\rangle\ge0$. Hence $p_{\mathrm{gram}}(h,1,D,\sigma^2)\le r(h)$, and together with $\mathtt{PEP}(h,1,D,\sigma^2)\le p_{\mathrm{gram}}(h,1,D,\sigma^2)$ this proves the claimed upper bound for positive stepsizes. The boundary cases $h\in(0,3/2]^N$ follow by continuity, and rescaling the objective and stochastic gradients gives the result for general $L>0$.
+For $h\in(0,\frac{3}{2}]^N$ and $L=1$, Propositions~8.1 and~8.2 imply that
+the right-hand side of~(3.1) is nonnegative at every feasible point
+of~(8.1): the equality-constraint terms equal to 0, the inequality-constraint terms are nonnegative, and $\langle Z,G\rangle\ge0$.
+By Proposition~8.3,
+\[r(h)-(f_N-f_\star)\]
+is equal to this right-hand side, and hence
+\[f_N-f_\star\le r(h)\]
+at every feasible point. Therefore,
+\[p_{\mathrm{gram}}(h,1,D,\sigma^2)\le r(h).\]
+Together with
+\[\mathtt{PEP}(h,1,D,\sigma^2) \le p_{\mathrm{gram}}(h,1,D,\sigma^2), \]
+this proves the claimed upper bound for positive stepsizes.
+The boundary cases $h\in(0,\frac{3}{2}]^N$ follow by continuity, and rescaling gives the result for general $L>0$.
 
 
 
