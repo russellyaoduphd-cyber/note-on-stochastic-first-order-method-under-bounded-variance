@@ -302,11 +302,11 @@ additional iterate vectors are needed in the Gram representation.
 After substituting these relations and taking expectations, each
 $\mathcal Q_{i,j}(F,G)$ is affine in $F$ and $G$.
 The initial-distance and bounded-variance assumptions similarly give
-the nonnegative quantities \[ \mathcal R(F,G) := D^2-\|x_0-x_\star\|^2 \geq0 \] and \[ \mathcal S_k(F,G) := \sigma^2-\|\epsilon_k\|^2 \geq0, \qquad k=0,\ldots,N-1. \]
+the nonnegative quantities \[ \mathcal R(F,G) := D^2- \mathbb{E}\|x_0-x_\star\|^2 \geq0 \] and \[ \mathcal S_k(F,G) := \sigma^2- \mathbb{E}\|\epsilon_k\|^2 \geq0, \qquad k=0,\ldots,N-1. \]
 Moreover, following the stochastic PEP relaxation, the relevant moment consequences of independence and zero mean are encoded through orthogonality constraints with the history information. We write these relations as
-\[ \mathcal E_{k,\ell}(F,G) := \langle\epsilon_k,\epsilon_\ell\rangle =0, \qquad 0\leq\ell<k\leq N-1, \]
+\[ \mathcal E_{k,\ell}(F,G) :=\mathbb{E} \langle\epsilon_k,\epsilon_\ell\rangle =0, \qquad 0\leq\ell<k\leq N-1, \]
 \[ \mathcal G_{k,j}(F,G) := \langle\epsilon_k,g_j\rangle =0, \qquad 0\leq j\leq k\leq N-1, \]
-and \[ \mathcal X_{k,0}(F,G) := \langle\epsilon_k,x_0-x_\star\rangle =0, \qquad k=0,\ldots,N-1. \]
+and \[ \mathcal X_{k,0}(F,G) :=\mathbb{E} \langle\epsilon_k,x_0-x_\star\rangle =0, \qquad k=0,\ldots,N-1. \]
 Together with the SGD recursion, these equalities also imply
 $\langle\epsilon_k,x_j-x_\star\rangle=0$
 for every $j\leq k$.
@@ -412,8 +412,9 @@ Define \[ B_N =
 1 & -T_0 e_1^\top & 0_{1\times N}\\
 0_{N\times1} & \Delta_N & -H_N
 \end{pmatrix}, \]
-where $e_1$ denotes the first standard basis vector of
-$\mathbb R^{N+1}$.
+We index the rows and columns of the $(N+1)\times(N+1)$ matrices
+below by $\{0,\ldots,N\}$, and let $e_0,\ldots,e_N$ denote the
+corresponding standard basis of $\mathbb R^{N+1}$.
 Next, define $K_N\in\mathbb R^{(N+1)\times(N+1)}$ by
 \[ (K_N)_{jk} = \begin{cases} 1, &j=k=0, \\[0.4em]
 \displaystyle 2\prod_{m=j}^{k-1}(1-\alpha_m),
