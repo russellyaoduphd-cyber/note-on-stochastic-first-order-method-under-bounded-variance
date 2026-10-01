@@ -23,6 +23,8 @@
 
 \todo[inline]{We need to add an AI disclosure to the appendix.}
 
+\todo[inline]{We need to fill in related work and references.}
+
 \section{Introduction}
 
 We consider the problem of $L$-smooth convex minimization of the form
@@ -167,6 +169,19 @@ Figure~\ref{fig:stepsizes} shows the optimal stepsize schedules for $N=10,100$ s
 \subsection{Related Work} \label{sec:related}
 
 
+Discuss PEP generally
+
+Discuss deterministic fractal stepsizes.
+
+Discuss Stochastic PEP (relaxation or finite sums)
+
+Discuss Bai Zhou strongly convex SGD results
+
+
+Discuss best non-PEP SGD analysis existing. How much do we improve by?
+
+
+
 \section{Proof of Exact Lower Bound for any $h\in \mathbb{R}^N_+$} \label{sec:LB}
 
 We construct our worst-case problem instance in dimension $d\geq N+1$ as follows:
@@ -302,11 +317,11 @@ additional iterate vectors are needed in the Gram representation.
 After substituting these relations and taking expectations, each
 $\mathcal Q_{i,j}(F,G)$ is affine in $F$ and $G$.
 The initial-distance and bounded-variance assumptions similarly give
-the nonnegative quantities \[ \mathcal R(F,G) := D^2- \mathbb{E}\|x_0-x_\star\|^2 \geq0 \] and \[ \mathcal S_k(F,G) := \sigma^2- \mathbb{E}\|\epsilon_k\|^2 \geq0, \qquad k=0,\ldots,N-1. \]
+the nonnegative quantities \[ \mathcal R(F,G) := D^2- \|x_0-x_\star\|^2 \geq0 \] and \[ \mathcal S_k(F,G) := \sigma^2- \mathbb{E}_{\epsilon}\|\epsilon_k\|^2 \geq0, \qquad k=0,\ldots,N-1. \]
 Moreover, following the stochastic PEP relaxation, the relevant moment consequences of independence and zero mean are encoded through orthogonality constraints with the history information. We write these relations as
-\[ \mathcal E_{k,\ell}(F,G) :=\mathbb{E} \langle\epsilon_k,\epsilon_\ell\rangle =0, \qquad 0\leq\ell<k\leq N-1, \]
-\[ \mathcal G_{k,j}(F,G) := \langle\epsilon_k,g_j\rangle =0, \qquad 0\leq j\leq k\leq N-1, \]
-and \[ \mathcal X_{k,0}(F,G) :=\mathbb{E} \langle\epsilon_k,x_0-x_\star\rangle =0, \qquad k=0,\ldots,N-1. \]
+\[ \mathcal E_{k,\ell}(F,G) :=\mathbb{E}_{\epsilon} \langle\epsilon_k,\epsilon_\ell\rangle =0, \qquad 0\leq\ell<k\leq N-1, \]
+\[ \mathcal G_{k,j}(F,G) :=\mathbb{E}_{\epsilon} \langle\epsilon_k,g_j\rangle =0, \qquad 0\leq j\leq k\leq N-1, \]
+and \[ \mathcal X_{k,0}(F,G) :=\mathbb{E}_{\epsilon} \langle\epsilon_k,x_0-x_\star\rangle =0, \qquad k=0,\ldots,N-1. \]
 Together with the SGD recursion, these equalities also imply
 $\langle\epsilon_k,x_j-x_\star\rangle=0$
 for every $j\leq k$.
@@ -349,7 +364,7 @@ is tight in the regime of Theorem~\ref{thm:main-rate}.
 By weak duality, we can formulate the dual problem of~\eqref{eq:gram-pep} and obtain the upper bound by solving it.
 Our proof constructs explicit dual multipliers, given in closed form below, such that for all vectors $F$ and symmetric matrices $G$, \begin{equation}\label{eq:certificate-identity}
 \begin{aligned}
-r(h)-(f_N-f_\star) ={}& \tau \mathcal{R}(F,G) +\sum_{k=0}^{N-1}\eta_k \mathcal{S}_k(F,G) +\sum_{i,j\in\mathcal{I}_N}\lambda_{i,j}\mathcal{Q}_{i,j}(F,G) \\
+r(h)-\mathbb{E}_{\epsilon}[f_N-f_\star] = & \tau \mathcal{R}(F,G) +\sum_{k=0}^{N-1}\eta_k \mathcal{S}_k(F,G) +\sum_{i,j\in\mathcal{I}_N}\lambda_{i,j}\mathcal{Q}_{i,j}(F,G) \\
 &+ \sum_{k=0}^{N-1}\xi_k\mathcal{X}_{k,0}(F,G) +
 \sum_{k=0}^{N-1}\sum_{j=0}^{k} \mu_{j,k}\mathcal{G}_{k,j}(F,G) \\
 &+ \sum_{k=0}^{N-1}\sum_{\ell=0}^{k-1} \nu_{\ell,k}\mathcal{E}_{k,\ell}(F,G)
@@ -409,7 +424,7 @@ and let \[ \Delta_N =
 \in\mathbb R^{N\times(N+1)}. \]
 Define \[ B_N =
 \begin{pmatrix}
-1 & -T_0 e_1^\top & 0_{1\times N}\\
+1 & -T_0 e_0^\top & 0_{1\times N}\\
 0_{N\times1} & \Delta_N & -H_N
 \end{pmatrix}, \]
 We index the rows and columns of the $(N+1)\times(N+1)$ matrices
@@ -511,16 +526,16 @@ Substituting this above gives
 \todo[inline]{Throughout this section, the indexing is made somewhat annoying by sometimes starting from $0$, sometimes from $1$ in matrices and vectors. I suspect if you made everything consistently count from $0$, it would clean many places up.}
 \begin{lemma}\label{lem:gram-kernel}
 Let $M_N:=K_N^\top\widehat W_NK_N$. Then
-\[(M_N)_{1,1}=\frac{1}{2T_0},\]
-\[(M_N)_{1,q+2}=\frac12\prod_{m=0}^{q}(1-\alpha_m), \qquad 0\le q\le N-1,\]
+\[(M_N)_{0,0}=\frac{1}{2T_0},\]
+\[(M_N)_{0,q+1}=\frac12\prod_{m=0}^{q}(1-\alpha_m), \qquad 0\le q\le N-1,\]
 and
-\[(M_N)_{p+2,q+2} =\frac{T_{p+1}}2\prod_{m=p+1}^{q}(1-\alpha_m),\qquad 0\le p\le q\le N-1.\]
+\[(M_N)_{p+1,q+1} =\frac{T_{p+1}}2\prod_{m=p+1}^{q}(1-\alpha_m),\qquad 0\le p\le q\le N-1.\]
 \end{lemma}
 \begin{proof}
-Since $K_Ne_1=e_1$, the first identity follows directly from the leading entry of $\widehat W_N$.
+Since $K_Ne_0=e_0$, the first identity follows directly from the leading entry of $\widehat W_N$.
 For the second identity, the definition of $K_N$ gives
-\[K_Ne_{q+2}=2\sum_{r=1}^{q+1}\prod_{m=r}^{q}(1-\alpha_m)e_{r+1}. \]
-Since $K_Ne_{q+2}$ has no $e_1$ component, only the $(1,2)$ entry of the leading block $\Gamma_N$ contributes. Hence
+\[K_Ne_{q+2}=2\sum_{r=1}^{q+1}\prod_{m=r}^{q}(1-\alpha_m)e_{r}. \]
+Since $K_Ne_{q+2}$ has no $e_1$ component, only the $(0,1)$ entry of the leading block $\Gamma_N$ contributes. Hence
 \[(M_N)_{1,q+2}=\frac{1-\alpha_0}{4}\,2\prod_{m=1}^{q}(1-\alpha_m)
 =\frac12\prod_{m=0}^{q}(1-\alpha_m). \]
 For the third identity, using the same expression for the columns of $K_N$ and factoring out the common product gives
@@ -570,7 +585,7 @@ For $j=N$, Lemma~\ref{lem:lambda-partial-sum} with $i=N-1$, together with $\alph
 Thus the coefficient of $f_N-f_\star$ is $-1$, and the function-value terms reduce to
 \[-(f_N-f_\star),\] as required.
 \subsubsection{Verification of $\|x_0-x_\star\|^2$ in Proposition~\ref{prop:certificate-identity}}
-We next consider the coefficient of $\|x_0-x_\star\|^2$. It receives contributions from $\tau\mathcal R(F,G)$ and $\langle Z,G\rangle$. Since the column of $B_N$ corresponding to $x_0-x_\star$ is $e_1$, Lemma~\ref{lem:gram-kernel} gives
+We next consider the coefficient of $\|x_0-x_\star\|^2$. It receives contributions from $\tau\mathcal R(F,G)$ and $\langle Z,G\rangle$. Since the column of $B_N$ corresponding to $x_0-x_\star$ is $e_0$, Lemma~\ref{lem:gram-kernel} gives
 \[-\tau+(M_N)_{1,1}=-\frac{1}{2T_0}+\frac{1}{2T_0}=0.\]
 \subsubsection{Verification of $\langle g_i,x_0-x_\star\rangle$ in Proposition~\ref{prop:certificate-identity}}
 Next consider $\langle g_i,x_0-x_\star\rangle$. The interpolation term $\lambda_{\star,i}\mathcal Q_{\star,i}$ contributes $\lambda_{\star,i}$, while the remaining contribution comes from $\langle Z,G\rangle$. The columns of $B_N$ corresponding to $g_i$ are
@@ -803,6 +818,13 @@ Since every subsequent stepsize in the optimized schedule is positive and no lar
 When $d\geq N+1$, Theorem~\ref{thm:main-rate} then ensures that $h^\star$ attains the lower bound in~\eqref{eq:general-LB}.
 Every alternative schedule has a strictly larger lower bound by the uniqueness proved above.
 Hence $h^\star$ is also the unique minimax optimal schedule.
+
+
+
+\section{Clarification of AI assistance}
+
+The authors used AI tools during the preparation of this manuscript. Codex was used to assist with editing, reorganization, consistency checks, and \LaTeX{} maintenance of the draft. In an early exploratory stage, ChatGPT Pro suggested we reformulate using the algebraic decompositions involving upper and lower triangular factors of the $TC$ form. This suggestion was central to our progress here. In its original development, this paper only addressed OGM and OGM-G. Once the paper~\cite{KimRyuDasGupta26} providing Lemniscate acceleration was released (approximately one month before this paper's first public posting), we provided ChatGPT Pro with our working manuscript to extend it to cover Lemniscate. It accomplished this directly, up to copyediting to match the form of our developments in Sections~\ref{sec:ogm} and~\ref{sec:ogmg}.
+All mathematical statements, proofs, references, and final editorial decisions in this manuscript are the responsibility of the authors.
 
 
 
